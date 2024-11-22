@@ -14,14 +14,14 @@
             <button id="registerTab">注册</button>
         </div>
 
-        <form id="loginForm" class="active">
+        <form id="loginForm" class="active" method="post" action="/login">
             <h2>登录</h2>
             <input type="text" placeholder="用户名" required>
             <input type="password" placeholder="密码" required>
             <button type="submit">登录</button>
         </form>
 
-        <form id="registerForm">
+        <form id="registerForm" method="post" action="/signup">
             <h2>注册</h2>
             <input type="text" placeholder="用户名" required>
             <input type="password" placeholder="密码" required>
@@ -50,6 +50,31 @@
             registerForm.classList.add('active');
             loginForm.classList.remove('active');
         });
+
+
+        loginForm.addEventListener('submit',function(event){
+
+            event.preventDefault();
+            const formData = new FormData(this);
+            const jsonData = {};
+
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', loginForm.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    let json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                }
+
+            };
+            xhr.send(jsonData);
+        })
     </script>
 
 </body>
