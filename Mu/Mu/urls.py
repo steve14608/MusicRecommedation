@@ -17,9 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from . import database
+from . import user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', database.testdb)
+    path('', user.page)
 ]

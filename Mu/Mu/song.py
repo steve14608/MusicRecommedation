@@ -31,19 +31,21 @@ def get_song(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
-    song_file = save_cache(uid=0,val = urlv1['data'][0]['url'],filetype='mp3')
-    return HttpResponse(song_file,status=200)
+    song_file = save_cache(uid=0, val=urlv1['data'][0]['url'], filetype='mp3')
+    return HttpResponse(song_file, status=200)
 
-#根据歌曲id返回歌曲图片
+
+# 根据歌曲id返回歌曲图片
 def get_song_pic(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     namev1 = name_v1(urlv1['data'][0]['id'])
-    cover_file = save_cache(uid=0,val = namev1['songs'][0]['al']['picUrl'],filetype='jpg')
-    return HttpResponse(cover_file,status=200)
+    cover_file = save_cache(uid=0, val=namev1['songs'][0]['al']['picUrl'], filetype='jpg')
+    return HttpResponse(cover_file, status=200)
 
-#根据歌曲id返回歌词
+
+# 根据歌曲id返回歌词
 def get_song_lyrics(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
