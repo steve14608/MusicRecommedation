@@ -41,5 +41,5 @@ class History(models.Model):
 
 
 class Avatar(models.Model):
-    avatar_index = models.IntegerField()
+    user_id = models.IntegerField()
     avatar = models.ImageField()

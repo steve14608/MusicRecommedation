@@ -31,7 +31,7 @@ def query(request_name, val):
         return models.Avatar.objects.get(avatar_index=val['avatar_index'])
     elif request_name == 'song_name':
         return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
-    elif request_name =='user_id':
+    elif request_name == 'user_id':
         return models.User.objects.get(user_id=val.COOKIES.get('user_id'))
 
 
@@ -49,8 +49,10 @@ def update(request_name, val):
         history = models.History.objects.get(user_id=val['user_id'], song_id=val['song_id'])
         history.last_time = val['last_time']
         history.save()
-    elif request_name =='avatar':
+    elif request_name == 'avatar':
         avatar = models.Avatar.objects.get(avatar_index=val)
+        avatar.avatar = val['avatar']
+        avatar.save()
 
 
 def insert(request_name, val):
@@ -60,3 +62,6 @@ def insert(request_name, val):
     elif request_name == 'history':
         history = models.History(user_id=val['user_id'], song_id=val['song_id'], last_time=val['last_time'])
         history.save()
+    elif request_name =='avatar':
+        avatar = models.Avatar(avatar_index=val.COOKIES.get('user_id'))
+        avatar.save()

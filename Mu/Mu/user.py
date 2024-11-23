@@ -42,21 +42,21 @@ def signup(request):
 
 # 更新头图
 def updateAvatar(request):
-    user = database.query(request_name='user_id',val=request)
-    val = {'avatar_index':user.user_id,'avatar':request}
+    user = database.query(request_name='user_id', val=request)
+    val = {'avatar_index': user.user_id, 'avatar': request}
     pass
 
 
 # 更新签名
 def updateBio(request):
     database.update('user', request)
-    return HttpResponse(status=200);
-    pass
+    return HttpResponse(status=200)
+
 
 
 # 获取信息
 def getUserDetail(request):
-    user = database.query(request_name='user_id',val=request)
+    user = database.query(request_name='user_id', val=request)
     user_info = {'user_id': user.user_id, "user_bio": user.user_bio,
                  "user_nickname": user.user_nickname, "user_avatar": user.user_avatar}
     return HttpResponse(json.dumps(user_info), status=200)

@@ -12,11 +12,13 @@
     <div class="sidebar">
         <div class="user-info">
             
-            <form id="userInfoForm">
+            <div id="avatarDiv">
                 <!-- 用户头像 -->
                 <img id="avatar" src="https://via.placeholder.com/100" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
-                <input type="file" id="avatarUpload" class="avatar-upload" accept="image/*" style="display:none;" onchange="handleFiles(this.files)"><br><br>
+                <input type="file" id="avatarUpload" class="avatar-upload" accept="image/jpeg" style="display:none;" onchange="handleFiles(this.files)"><br><br>
+            </div>
 
+            <form id="userInfoForm">
                 <!-- 昵称 -->
                 <label for="nickname">昵称:</label><br>
                 <input type="text" id="nickname" value="Amy" class="user-input"><br><br>
@@ -26,7 +28,7 @@
                 <textarea id="signature" class="user-input" rows="4" placeholder="填写个性签名..."></textarea><br><br>
 
                 <!-- 保存按钮 -->
-                <button type="button" onclick="updateUserInfo()">更新信息</button>
+                <button type="submit">更新信息</button>
             </form>
 
         
@@ -145,5 +147,28 @@
     </div>
 
     <script src="./js/script.js"></script>
+    <script>
+        const form = document.getElementById('userInfoForm')
+        const nickname = document.getElementById('nickname')
+        const signature = document.getElementById('signature')
+
+        form.addEventListener('submit',function(event){
+            event.preventDefault();
+            const jsonData = {"user_nick_name":nickname.textContent,"user_bio":signature.textContent};
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', loginForm.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    let json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                }
+
+            };
+            xhr.send(jsonData);
+
+        })
+    </script>
 </body>
 </html>
