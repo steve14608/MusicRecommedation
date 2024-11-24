@@ -30,8 +30,8 @@ class User(models.Model):
     user_account = models.IntegerField()
     user_password = models.CharField(max_length=18)
     user_avatar = models.IntegerField()
-    user_bio = models.CharField(32)
-    user_nickname = models.CharField(16)
+    user_bio = models.CharField(max_length=32, default='无')
+    user_nickname = models.CharField(max_length=16, default='默认用户')
 
 
 class History(models.Model):

@@ -21,5 +21,13 @@ from . import user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', user.page)
+    path('', user.page),
+    path('login', user.login),
+    path('signup', user.signup),
+    path('updateAvatar', user.updateAvatar),
+    path('updateInfo', user.updateInfo),
+    path('getUserDetail', user.getUserDetail),
+    path('getUsetAvatar', user.getUsetAvatar),
+    path('updateHistory', user.updateHistory),
+    path('getHistory', user.getHistory),
 ]

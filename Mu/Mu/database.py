@@ -35,6 +35,7 @@ def query(request_name, val):
         return models.User.objects.get(user_id=val['user_id'])
 
 
+
 def update(request_name, val):
     if request_name == 'user':
         user = models.User.objects.get(user_id=val['user_id'])
