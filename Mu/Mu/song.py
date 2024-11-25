@@ -13,7 +13,7 @@ from temp import save_cache
 
 
 # 前端搜索的功能
-def search_song(request):
+def searchSong(request):
     id_list = database.query('song_name', request['song_name'])
     song_list = []
     single = {}
@@ -27,7 +27,7 @@ def search_song(request):
 
 
 # 根据song_id返回file
-def get_song(response):
+def getSong(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
@@ -36,7 +36,7 @@ def get_song(response):
 
 
 # 根据歌曲id返回歌曲图片
-def get_song_pic(response):
+def getSongCover(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
@@ -46,7 +46,7 @@ def get_song_pic(response):
 
 
 # 根据歌曲id返回歌词
-def get_song_lyrics(response):
+def getSongLyrics(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)

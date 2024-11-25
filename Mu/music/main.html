@@ -17,7 +17,7 @@
             
             <div id="avatarDiv">
                 <!-- 用户头像 -->
-                <img id="avatar" src="https://via.placeholder.com/100" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
+                <img id="avatar" src="/getUserAvatar" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
                 <input type="file" id="avatarUpload" class="avatar-upload" accept="image/jpeg" style="display:none;" onchange="handleFiles(this.files)"><br><br>
             </div>
 
@@ -151,6 +151,10 @@
 
     <script src="../static/js/script.js"></script>
     <script>
+
+    </script>
+    <script>
+        //这是保存的功能
         const form = document.getElementById('userInfoForm')
         const nickname = document.getElementById('nickname')
         const signature = document.getElementById('signature')

@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from . import user
+from . import song
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +28,11 @@ urlpatterns = [
     path('updateAvatar', user.updateAvatar),
     path('updateInfo', user.updateInfo),
     path('getUserDetail', user.getUserDetail),
-    path('getUsetAvatar', user.getUsetAvatar),
+    path('getUserAvatar', user.getUserAvatar),
     path('updateHistory', user.updateHistory),
     path('getHistory', user.getHistory),
+    path('getSong', song.getSong),
+    path('getSongCover', song.getSongCover),
+    path('getSongLyrics', song.getSongLyrics),
+    path('getSongLyrics', song.getSongLyrics),
 ]

@@ -34,6 +34,7 @@
         </form>
     </div>
 
+    <script src="../static/js/cookie.js"></script>
     <script>
         // 切换登录和注册表单
         const loginTab = document.getElementById('loginTab');
@@ -58,18 +59,19 @@
 
         loginForm.addEventListener('submit',function(event){
 
+
             event.preventDefault();
 
             const form = event.target; // 当前表单
             const formData = new FormData(form);
             // 转换为 JSON 对象
             const jsonData = JSON.stringify(Object.fromEntries(formData.entries()));
-            console.log(jsonData)
 
 
             let xhr = new XMLHttpRequest();
             xhr.open('POST', loginForm.action, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-CSRFToken',getCSRF())
 
 
             xhr.onreadystatechange = function () {
@@ -105,6 +107,7 @@
             let xhr = new XMLHttpRequest();
             xhr.open('POST', registerForm.action, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-CSRFToken',getCSRF());
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {

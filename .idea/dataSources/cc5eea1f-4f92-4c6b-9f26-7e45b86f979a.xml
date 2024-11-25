@@ -1494,7 +1494,7 @@ model</ColNames>
       <UnderlyingIndexName>django_content_type_app_label_model_76bd3d3b_uniq</UnderlyingIndexName>
     </key>
     <column id="395" parent="305" name="id">
-      <AutoIncrement>22</AutoIncrement>
+      <AutoIncrement>23</AutoIncrement>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>

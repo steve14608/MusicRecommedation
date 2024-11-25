@@ -12,6 +12,10 @@ def page(request):
     if request.COOKIES.get('user_id') is None:
         return render(request, 'login1.html')
     else:
+        temp = database.query(request_name='user_id', val={'user_id': request.COOKIES.get('user_id')})
+        if len(temp) == 0:
+            request.delete_cookie('user_id')
+            return render(request, 'login1.html')
         return render(request, 'main.html')
 
 
@@ -73,14 +77,14 @@ def updateInfo(request):
 # 获取信息
 def getUserDetail(request):
     val = {"user_id": request.COOKIES.get('user_id')}
-    user = database.query(request_name='user_id', val=val)
+    user = database.query(request_name='user_id', val=val)[0]
     user_info = {'user_id': user.user_id, "user_bio": user.user_bio,
                  "user_nickname": user.user_nickname, "user_avatar": user.user_avatar}
     return HttpResponse(json.dumps(user_info), status=200)
 
 
 # 获取头图
-def getUsetAvatar(request):
+def getUserAvatar(request):
     val = {"avatar_index": request.COOKIES.get('user_id')}
     return HttpResponse(database.query(request_name='avatar', val=val), status=200)
 
