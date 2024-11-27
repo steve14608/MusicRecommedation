@@ -9,7 +9,6 @@ import requests
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from Mus import models
-from temp import save_cache
 from netease import wangyiyun
 
 
