@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from Mus import models
 from temp import save_cache
+from netease import wangyiyun
 
 
 # 前端搜索的功能
@@ -17,12 +18,21 @@ def searchSong(request):
     id_list = database.query('song_name', request['song_name'])
     song_list = []
     single = {}
-    for song_id in id_list:
-        song_info = database.query('song_info', song_id)
-        single['song_id'] = song_info.song_id
-        single['song_name'] = song_info.song_name
-        single['song_singer'] = song_info.song_singer
-        song_list.append(single)
+    if len(id_list) < 2:
+        data = wangyiyun().get_search(s=request['song_name'])
+        data = data['result']['songs']
+        for di in data:
+            single['song_id'] = di['id']
+            single['song_name'] = di['name']
+            single['song_singer'] = di['ar'][0]['name']
+            song_list.append(single)
+    else:
+        for song_id in id_list:
+            song_info = database.query('song_info', song_id)
+            single['song_id'] = song_info.song_id
+            single['song_name'] = song_info.song_name
+            single['song_singer'] = song_info.song_singer
+            song_list.append(single)
     return json.dumps(song_list)
 
 
@@ -31,8 +41,8 @@ def getSong(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
-    song_file = save_cache(uid=0, val=urlv1['data'][0]['url'], filetype='mp3')
-    return HttpResponse(song_file, status=200)
+    # song_file = save_cache(uid=0, val=urlv1['data'][0]['url'], filetype='mp3')
+    return HttpResponse(urlv1['data'][0]['url'], status=200)
 
 
 # 根据歌曲id返回歌曲图片
@@ -41,8 +51,8 @@ def getSongCover(response):
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     namev1 = name_v1(urlv1['data'][0]['id'])
-    cover_file = save_cache(uid=0, val=namev1['songs'][0]['al']['picUrl'], filetype='jpg')
-    return HttpResponse(cover_file, status=200)
+    # cover_file = save_cache(uid=0, val=namev1['songs'][0]['al']['picUrl'], filetype='jpg')
+    return HttpResponse(namev1['songs'][0]['al']['picUrl'], status=200)
 
 
 # 根据歌曲id返回歌词
@@ -51,7 +61,10 @@ def getSongLyrics(response):
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-    return HttpResponse(['lrc']['lyric'])
+    return HttpResponse(lyricv1['lrc']['lyric'])
+
+
+# 下面的函数都不用看
 
 
 def HexDigest(data):
@@ -156,32 +169,3 @@ def lyric_v1(id, cookies):
     data = {'id': id, 'cp': 'false', 'tv': '0', 'lv': '0', 'rv': '0', 'kv': '0', 'yv': '0', 'ytv': '0', 'yrv': '0'}
     response = requests.post(url=url, data=data, cookies=cookies)
     return response.json()
-
-
-def test(id, level, type):
-    jsondata = id
-    cookies = parse_cookie(read_cookie())
-    urlv1 = url_v1(ids(jsondata), level, cookies)
-    namev1 = name_v1(urlv1['data'][0]['id'])
-    lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-
-    if namev1['songs']:
-        song_url = urlv1['data'][0]['url']
-        song_name = namev1['songs'][0]['name']
-        song_picUrl = namev1['songs'][0]['al']['picUrl']
-        song_alname = namev1['songs'][0]['al']['name']
-        artist_names = []
-        for song in namev1['songs']:
-            ar_list = song['ar']
-            if len(ar_list) > 0:
-                artist_names.append('/'.join(ar['name'] for ar in ar_list))
-            song_arname = ', '.join(artist_names)
-    data = {
-        "name": song_name,
-        "pic": song_picUrl,
-        "ar_name": song_arname,
-        "url": song_url,
-        "lyric": lyricv1['lrc']['lyric'],
-    }
-    # json_data = json.dumps(data)
-    return data
