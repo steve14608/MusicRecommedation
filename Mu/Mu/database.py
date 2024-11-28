@@ -30,6 +30,7 @@ def query(request_name, val):
     elif request_name == 'avatar':
         return models.Avatar.objects.get(avatar_index=val['avatar_index']).avatar
     elif request_name == 'song_name':
+        val = val['song_name']
         return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
     elif request_name == 'user_id':
         return models.User.objects.filter(user_id=val['user_id'])

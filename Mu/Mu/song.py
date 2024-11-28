@@ -14,11 +14,15 @@ from netease import wangyiyun
 
 # 前端搜索的功能
 def searchSong(request):
-    id_list = database.query('song_name', request['song_name'])
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+    val = {"song_name": json_data['search']}
+
+    id_list = database.query('song_name', val)
     song_list = []
     single = {}
     if len(id_list) < 2:
-        data = wangyiyun().get_search(s=request['song_name'])
+        data = wangyiyun().get_search(s=val['song_name'])
         data = data['result']['songs']
         for di in data:
             single['song_id'] = di['id']
@@ -36,8 +40,11 @@ def searchSong(request):
 
 
 # 根据song_id返回file
-def getSongUrl(response):
-    jsondata = str(response['song_id'])
+def getSongUrl(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     # song_file = save_cache(uid=0, val=urlv1['data'][0]['url'], filetype='mp3')
@@ -45,8 +52,11 @@ def getSongUrl(response):
 
 
 # 根据歌曲id返回歌曲图片
-def getSongCover(response):
-    jsondata = str(response['song_id'])
+def getSongCover(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     namev1 = name_v1(urlv1['data'][0]['id'])
@@ -55,16 +65,23 @@ def getSongCover(response):
 
 
 # 根据歌曲id返回歌词
-def getSongLyrics(response):
-    jsondata = str(response['song_id'])
+def getSongLyrics(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
     return HttpResponse(lyricv1['lrc']['lyric'])
 
 
-def getSong(response):
-    jsondata = str(response['song_id'])
+# 返回歌曲封面、作者、歌名
+def getSong(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     namev1 = name_v1(urlv1['data'][0]['id'])

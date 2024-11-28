@@ -60,6 +60,7 @@ def signup(request):
 
 # 更新头图
 def updateAvatar(request):
+
     val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request['avatar']}
     database.update(request_name='avatar', val=val)
     return HttpResponse(status=200)
