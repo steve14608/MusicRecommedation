@@ -47,7 +47,7 @@ def signup(request):
     if database.query(request_name='user_account', val=val):
         return HttpResponse(status=404)
     else:
-        ti = time.time()
+        ti = int(time.time())
         user = {'user_account': val['user_account'], 'user_password': val['user_password'], 'user_id': ti,
                 'user_avatar': ti, 'user_bio': '无', 'user_nickname': '默认'}
         database.insert(request_name='user', val=user)
