@@ -3,6 +3,7 @@ import os
 import requests
 
 
+# 目前来说这个文件没什么用
 def save_cache(uid, val, filetype):
     re = requests.get(url=val)
     try:
