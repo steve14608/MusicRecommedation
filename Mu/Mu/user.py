@@ -109,3 +109,23 @@ def getHistory(request):
         } for item in items
     ]
     return JsonResponse({'items': data})
+
+
+def get_recommendations(request):
+    """
+    根据用户的听歌记录生成推荐。
+    """
+    global MODEL  # 使用全局加载的模型
+
+    # 获取用户的听歌记录（例如通过 POST 提交的 JSON 数据）
+    user_data = request.POST.getlist("user_history")  # 假设发送的是歌曲 ID 列表
+    user_songs = [int(song_id) for song_id in user_data]
+
+    # 使用模型生成推荐（假设 MODEL 是一个 ItemCF 模型）
+    recommendations = []
+    for song_id in user_songs:
+        if song_id in MODEL:
+            recommendations.extend(sorted(MODEL[song_id].items(), key=lambda x: -x[1])[:5])
+
+    # 返回 JSON 响应
+    return JsonResponse({"recommendations": recommendations})

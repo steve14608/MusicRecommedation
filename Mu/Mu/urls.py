@@ -31,8 +31,9 @@ urlpatterns = [
     path('getUserAvatar', user.getUserAvatar),
     path('updateHistory', user.updateHistory),
     path('getHistory', user.getHistory),
-    path('getSong', song.getSong),
+    path('getSongUrl', song.getSongUrl),
     path('getSongCover', song.getSongCover),
     path('getSongLyrics', song.getSongLyrics),
     path('getSongLyrics', song.getSongLyrics),
+    path('getSong', song.getSong),
 ]

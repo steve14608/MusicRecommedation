@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import database
 import json
 import os
@@ -36,7 +36,7 @@ def searchSong(request):
 
 
 # 根据song_id返回file
-def getSong(response):
+def getSongUrl(response):
     jsondata = str(response['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
@@ -61,6 +61,17 @@ def getSongLyrics(response):
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
     return HttpResponse(lyricv1['lrc']['lyric'])
+
+
+def getSong(response):
+    jsondata = str(response['song_id'])
+    cookies = parse_cookie(read_cookie())
+    urlv1 = url_v1(ids(jsondata), 'standard', cookies)
+    namev1 = name_v1(urlv1['data'][0]['id'])
+
+    jsdata = {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
+              'cover': namev1['songs'][0]['al']['picUrl']}
+    return JsonResponse(jsdata)
 
 
 # 下面的函数都不用看
