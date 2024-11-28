@@ -1,7 +1,7 @@
 import json
 
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from . import database
 import time
 import os
@@ -10,13 +10,25 @@ import os
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
 def page(request):
     if request.COOKIES.get('user_id') is None:
-        return render(request, 'login1.html')
+        return redirect(loginPage)
     else:
         temp = database.query(request_name='user_id', val={'user_id': request.COOKIES.get('user_id')})
         if len(temp) == 0:
             request.delete_cookie('user_id')
-            return render(request, 'login1.html')
-        return render(request, 'main.html')
+            return redirect(loginPage)
+        return redirect(mainPage)
+
+
+def loginPage(request):
+    if request.COOKIES.get('user_id') is not None:
+        redirect(page)
+    return render(request, 'login.html')
+
+
+def mainPage(request):
+    if request.COOKIES.get('user_id') is None:
+        redirect(page)
+    return render(request, 'main.html')
 
 
 # 登录
@@ -60,7 +72,6 @@ def signup(request):
 
 # 更新头图
 def updateAvatar(request):
-
     val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request['avatar']}
     database.update(request_name='avatar', val=val)
     return HttpResponse(status=200)
