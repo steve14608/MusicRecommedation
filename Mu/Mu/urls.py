@@ -23,8 +23,6 @@ from . import song
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', user.page),
-    path('login1',user.loginPage),
-    path('mainpage',user.mainPage),
     path('login', user.login),
     path('signup', user.signup),
     path('updateAvatar', user.updateAvatar),
