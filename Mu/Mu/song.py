@@ -18,7 +18,7 @@ def searchSong(request):
     json_data = json.loads(raw_data)
     val = {"song_name": json_data['search']}
 
-    id_list = database.query('song_name', val)
+    id_list = database.query('song_name', val['song_name'])
     song_list = []
     single = {}
     if len(id_list) < 2:
@@ -89,6 +89,16 @@ def getSong(request):
     jsdata = {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
               'cover': namev1['songs'][0]['al']['picUrl']}
     return JsonResponse(jsdata)
+
+
+def getSongById(sid):
+    jsondata = str(sid)
+    cookies = parse_cookie(read_cookie())
+    urlv1 = url_v1(ids(jsondata), 'standard', cookies)
+    namev1 = name_v1(urlv1['data'][0]['id'])
+
+    return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
+            'cover': namev1['songs'][0]['al']['picUrl']}
 
 
 # 下面的函数都不用看

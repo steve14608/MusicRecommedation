@@ -19,13 +19,15 @@ def query(request_name, val):
         return len(models.User.objects.filter(user_account=val['user_account'])) > 0
     # 听歌历史
     elif request_name == 'user_history':
-        return models.History.filter(user_id=val['user_id'])
+        return models.History.objects.raw(f'select songid from history where user_id = {val} order by last_time desc')
     # 返回模型训练后与该歌曲有关的歌
     elif request_name == 'associated_song':
         return models.TrainModel.objects.filter(song_id=val['song_id'])
     # 根据song_id获取歌曲的详细信息
     elif request_name == 'song_info':
         return models.SongInfo.objects.filter(song_id=val['song_id'])
+    elif request_name == 'singerid':
+        return models.SongInfo.objects.raw(f'select singerid from rawdata5 where songid = {val}')
     # 返回头图
     elif request_name == 'avatar':
         return models.Avatar.objects.get(avatar_index=val['avatar_index']).avatar
@@ -34,7 +36,6 @@ def query(request_name, val):
         return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
     elif request_name == 'user_id':
         return models.User.objects.filter(user_id=val['user_id'])
-
 
 
 def update(request_name, val):

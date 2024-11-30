@@ -5,6 +5,7 @@ from django.shortcuts import render
 from . import database
 import time
 import os
+import song
 
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
@@ -17,8 +18,6 @@ def page(request):
             request.delete_cookie('user_id')
             return render(request, 'login1.html')
         return render(request, 'main.html')
-
-
 
 
 # 登录
@@ -62,7 +61,6 @@ def signup(request):
 
 # 更新头图
 def updateAvatar(request):
-
     val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request['avatar']}
     database.update(request_name='avatar', val=val)
     return HttpResponse(status=200)
@@ -103,32 +101,48 @@ def updateHistory(request):
 
 def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
-    items = database.query(request_name='user_history', val=val)
+    ids = database.query(request_name='user_history', val=val)[:8]
     data = [
         {
-            'id': item.id,
-            'name': item.name,
-            'description': item.description,
-        } for item in items
+            'songid': sid.songid,
+            'basicInfo': song.getSongById(sid.songid)
+        } for sid in ids
     ]
     return JsonResponse({'items': data})
 
 
+# 获取音乐推荐
 def get_recommendations(request):
-    """
-    根据用户的听歌记录生成推荐。
-    """
-    global MODEL  # 使用全局加载的模型
 
-    # 获取用户的听歌记录（例如通过 POST 提交的 JSON 数据）
-    user_data = request.POST.getlist("user_history")  # 假设发送的是歌曲 ID 列表
-    user_songs = [int(song_id) for song_id in user_data]
+    global MUSIC_MODEL
 
-    # 使用模型生成推荐（假设 MODEL 是一个 ItemCF 模型）
+    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=request.COOKIES.get('user_id'))]
+
     recommendations = []
     for song_id in user_songs:
-        if song_id in MODEL:
-            recommendations.extend(sorted(MODEL[song_id].items(), key=lambda x: -x[1])[:5])
+        if song_id in MUSIC_MODEL:
+            recommendations.extend(sorted(MUSIC_MODEL[song_id].items(), key=lambda x: -x[1])[:8])
+    if len(recommendations) > 0:
+        return JsonResponse({"recommendations": recommendations}, status=200)
+    return HttpResponse('暂无数据', status=404)
 
-    # 返回 JSON 响应
-    return JsonResponse({"recommendations": recommendations})
+
+#获取歌手推荐
+def get_recommend_singer(request):
+
+    global SINGER_MODEL
+
+    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=request.COOKIES.get('user_id'))]
+    singer_ids = []
+    for songid in user_songs:
+        queryda = database.query(request_name='singerid',val=songid)
+        if len(queryda)>0:
+            singer_ids.append(queryda[0][0])
+
+    recommendations = []
+    for singer_id in singer_ids:
+        if singer_id in SINGER_MODEL:
+            recommendations.extend(sorted(SINGER_MODEL[singer_id].items(), key=lambda x: -x[1])[:8])
+    if len(recommendations) > 0:
+        return JsonResponse({"recommendations": recommendations}, status=200)
+    return HttpResponse('暂无数据', status=404)
