@@ -18,6 +18,7 @@
             <button id="registerTab">注册</button>
         </div>
 
+        {%csrf_token%}
         <form id="loginForm" class="active" method="post" action="/login">
             <h2>登录</h2>
             <input type="text" placeholder="账号" name="user_account" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" required>
@@ -25,6 +26,7 @@
             <button type="submit">登录</button>
         </form>
 
+        {%csrf_token%}
         <form id="registerForm" method="post" action="/signup">
             <h2>注册</h2>
             <input type="text" placeholder="账号" name="user_account" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" required>
