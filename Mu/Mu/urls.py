@@ -17,9 +17,27 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from . import database
+from . import user
+from . import song
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', database.testdb)
+    path('', user.page),
+    path('login', user.login),
+    path('signup', user.signup),
+    path('updateAvatar', user.updateAvatar),
+    path('updateInfo', user.updateInfo),
+    path('getUserDetail', user.getUserDetail),
+    path('getUserAvatar', user.getUserAvatar),
+    path('updateHistory', user.updateHistory),
+    path('getHistory', user.getHistory),
+    path('getSongUrl', song.getSongUrl),
+    path('getSongCover', song.getSongCover),
+    path('getSongLyrics', song.getSongLyrics),
+    path('getSongLyrics', song.getSongLyrics),
+    path('getSong', song.getSong),
+    path('getRecommend', user.get_recommendations),
+    path('getRecommendSinger', user.get_recommend_singer),
+    path('getSongBySingerId', song.getSongBySingerId),
+    path('searchSong',song.searchSong)
 ]

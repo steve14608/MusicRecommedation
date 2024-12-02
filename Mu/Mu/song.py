@@ -1,55 +1,147 @@
-from django.http import HttpResponse
-import database
+from django.http import HttpResponse, JsonResponse
+from . import database
 import json
 import os
 import urllib.parse
 from hashlib import md5
 from random import randrange
 import requests
+from .wangyiyun import wangyiyun
+from lxml import etree
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from Mus import models
-from temp import save_cache
 
 
 # 前端搜索的功能
-def search_song(request):
-    id_list = database.query('song_name', request['song_name'])
-    song_list = []
-    single = {}
-    for song_id in id_list:
-        song_info = database.query('song_info', song_id)
-        single['song_id'] = song_info.song_id
-        single['song_name'] = song_info.song_name
-        single['song_singer'] = song_info.song_singer
-        song_list.append(single)
-    return json.dumps(song_list)
+def searchSong(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+    val = {"song_name": json_data['search']}
+
+    data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
+    if len(data_list) < 2:
+        data = wangyiyun().get_search(s=val['song_name'])
+        song_list = [
+            {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
+             'song_singer_id': i['ar'][0]['id']} for i in data['result']['songs'][:10]
+        ]
+    else:
+        data_list = data_list[:10]
+        song_list = [
+            {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
+        ]
+    return JsonResponse({'data': song_list}, status=200)
 
 
 # 根据song_id返回file
-def get_song(response):
-    jsondata = str(response['song_id'])
+def getSongUrl(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
-    song_file = save_cache(uid=0,val = urlv1['data'][0]['url'],filetype='mp3')
-    return HttpResponse(song_file,status=200)
+    # song_file = save_cache(uid=0, val=urlv1['data'][0]['url'], filetype='mp3')
+    return HttpResponse(urlv1['data'][0]['url'], status=200)
 
-#根据歌曲id返回歌曲图片
-def get_song_pic(response):
-    jsondata = str(response['song_id'])
+
+# 根据歌曲id返回歌曲图片
+def getSongCover(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     namev1 = name_v1(urlv1['data'][0]['id'])
-    cover_file = save_cache(uid=0,val = namev1['songs'][0]['al']['picUrl'],filetype='jpg')
-    return HttpResponse(cover_file,status=200)
+    # cover_file = save_cache(uid=0, val=namev1['songs'][0]['al']['picUrl'], filetype='jpg')
+    return HttpResponse(namev1['songs'][0]['al']['picUrl'], status=200)
 
-#根据歌曲id返回歌词
-def get_song_lyrics(response):
-    jsondata = str(response['song_id'])
+
+# 根据歌曲id返回歌词
+def getSongLyrics(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-    return HttpResponse(['lrc']['lyric'])
+    return HttpResponse(lyricv1['lrc']['lyric'])
+
+
+# 返回歌曲封面、作者、歌名
+def getSong(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+
+    jsondata = str(json_data['song_id'])
+    cookies = parse_cookie(read_cookie())
+    urlv1 = url_v1(ids(jsondata), 'standard', cookies)
+    namev1 = name_v1(urlv1['data'][0]['id'])
+
+    jsdata = {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
+              'cover': namev1['songs'][0]['al']['picUrl']}
+    return JsonResponse(jsdata, status=200)
+
+
+def getSongById(sid):
+    jsondata = str(sid)
+    cookies = parse_cookie(read_cookie())
+    urlv1 = url_v1(ids(jsondata), 'standard', cookies)
+    namev1 = name_v1(urlv1['data'][0]['id'])
+
+    return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
+            'cover': namev1['songs'][0]['al']['picUrl']}
+
+
+def getSongBySingerId(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+    val = {'song_singer_id': json_data['song_singer_id']}
+    data = database.query(request_name='song_singer_id', val=val)  # songinfo的list
+    if len(data) < 4:
+        da = getSingerSongInfo(val['song_singer_id'])
+    else:
+        da = [
+            {'song_id': i.song_id, 'song_name': i.song_name} for i in data
+        ]
+    return JsonResponse({'singer_name': data[0].song_singer, 'singer_id': data[0].song_singer_id, 'data': da},
+                        status=200)
+
+
+def getSingerHeadPic(singer_id):
+    html = etree.HTML(
+        requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
+                                                                                                'NT 10.0;'
+                                                                                                'Win64; x64) '
+                                                                                                'AppleWebKit/537.36 ('
+                                                                                                'KHTML, like Gecko) '
+                                                                                                'Chrome/131.0.0.0 '
+                                                                                                'Safari/537.36'
+                                                                                                'Edg/131.0.0.0'}).content)
+    return html.xpath("//div[@class='n-artist f-cb']/img/@src")[0]
+
+
+def getSingerSongInfo(singer_id):
+    html = etree.HTML(
+        requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
+                                                                                                'NT 10.0;'
+                                                                                                'Win64; x64) '
+                                                                                                'AppleWebKit/537.36 ('
+                                                                                                'KHTML, like Gecko) '
+                                                                                                'Chrome/131.0.0.0 '
+                                                                                                'Safari/537.36'
+                                                                                                'Edg/131.0.0.0'}).content)
+    datalist = []
+    lista = html.xpath("//ul[@class='f-hide']/li/a/@href")
+    listb = html.xpath("//ul[@class='f-hide']/li/a").text
+    for i in range(0, len(lista) if len(lista) < 10 else 10):
+        datalist.append({'song_id': lista[i][9:], 'song_name': listb[i]})
+    return datalist
+
+
+# 下面的函数都不用看
 
 
 def HexDigest(data):
@@ -81,7 +173,8 @@ def read_cookie():
 
 def post(url, params, cookie):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/91.0.4472.164 NeteaseMusicDesktop/2.10.2.200154',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 '
+                      'Chrome/91.0.4472.164 NeteaseMusicDesktop/2.10.2.200154',
         'Referer': '',
     }
     cookies = {
@@ -154,32 +247,3 @@ def lyric_v1(id, cookies):
     data = {'id': id, 'cp': 'false', 'tv': '0', 'lv': '0', 'rv': '0', 'kv': '0', 'yv': '0', 'ytv': '0', 'yrv': '0'}
     response = requests.post(url=url, data=data, cookies=cookies)
     return response.json()
-
-
-def test(id, level, type):
-    jsondata = id
-    cookies = parse_cookie(read_cookie())
-    urlv1 = url_v1(ids(jsondata), level, cookies)
-    namev1 = name_v1(urlv1['data'][0]['id'])
-    lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-
-    if namev1['songs']:
-        song_url = urlv1['data'][0]['url']
-        song_name = namev1['songs'][0]['name']
-        song_picUrl = namev1['songs'][0]['al']['picUrl']
-        song_alname = namev1['songs'][0]['al']['name']
-        artist_names = []
-        for song in namev1['songs']:
-            ar_list = song['ar']
-            if len(ar_list) > 0:
-                artist_names.append('/'.join(ar['name'] for ar in ar_list))
-            song_arname = ', '.join(artist_names)
-    data = {
-        "name": song_name,
-        "pic": song_picUrl,
-        "ar_name": song_arname,
-        "url": song_url,
-        "lyric": lyricv1['lrc']['lyric'],
-    }
-    # json_data = json.dumps(data)
-    return data

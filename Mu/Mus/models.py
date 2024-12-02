@@ -4,25 +4,13 @@ from django.db import models
 from django.db import models
 
 
-# Create your models here.
-class TrainModel(models.Model):
-    song_id = models.IntegerField()
-    r0 = models.IntegerField()
-    r1 = models.IntegerField()
-    r2 = models.IntegerField()
-    r3 = models.IntegerField()
-    r4 = models.IntegerField()
-    r5 = models.IntegerField()
-    r6 = models.IntegerField()
-    r7 = models.IntegerField()
-    r8 = models.IntegerField()
-    r9 = models.IntegerField()
-
+# Create your models here.python3 manage.py migrate
 
 class SongInfo(models.Model):
     song_id = models.IntegerField()
-    song_name = models.CharField(max_length=32)
-    song_singer = models.CharField(max_length=18)
+    song_name = models.CharField(max_length=64)
+    song_singer = models.CharField(max_length=32)
+    song_singer_id = models.IntegerField()
 
 
 class User(models.Model):
@@ -30,16 +18,16 @@ class User(models.Model):
     user_account = models.IntegerField()
     user_password = models.CharField(max_length=18)
     user_avatar = models.IntegerField()
-    user_bio = models.CharField(32)
-    user_nickname = models.CharField(16)
+    user_bio = models.CharField(max_length=32, default='无')
+    user_nickname = models.CharField(max_length=16, default='默认用户')
 
 
 class History(models.Model):
     user_id = models.IntegerField()
     song_id = models.IntegerField()
-    last_time = models.TimeField()
+    last_time = models.IntegerField()
 
 
 class Avatar(models.Model):
-    avatar_index = models.IntegerField()
-    avatar = models.ImageField()
+    user_id = models.IntegerField()
+    avatar = models.ImageField(upload_to='avatars/')
