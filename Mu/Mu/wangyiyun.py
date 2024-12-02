@@ -80,6 +80,7 @@ class wangyiyun:
                        "53858DBE9D345B48719AE9D987938C2122D472EB9C9B3E27E"
                        "4DAC41994965C752DC19CB8CF7CFCEF66295F155AC592AB852"
                        "FC518914A7ECBB0D368562"})
+
         return re.json()  # 返回结果
 
     # 返回搜索数据

@@ -24,6 +24,7 @@
             <input type="password" placeholder="密码" name="user_password" required>
             <button type="submit">登录</button>
         </form>
+
         {%csrf_token%}
         <form id="registerForm" method="post" action="/signup">
             <h2>注册</h2>
@@ -36,6 +37,7 @@
 
     <script src="../static/js/cookie.js"></script>
     <script>
+
         const loginTab = document.getElementById('loginTab');
         const registerTab = document.getElementById('registerTab');
         const loginForm = document.getElementById('loginForm');
@@ -47,13 +49,16 @@
             loginForm.classList.add('active');
             registerForm.classList.remove('active');
         });
+
         registerTab.addEventListener('click', () => {
             registerTab.classList.add('active');
             loginTab.classList.remove('active');
             registerForm.classList.add('active');
             loginForm.classList.remove('active');
         });
+
         loginForm.addEventListener('submit',function(event){
+
             event.preventDefault();
 
             const form = event.target; // 当前表单
@@ -76,7 +81,6 @@
                     alert("账号或密码错误")
                 }
             };
-            
         })
 
         registerForm.addEventListener('submit',function(event){
@@ -113,7 +117,7 @@
                     alert("该账号已被注册！")
                 }
             };
-            
+
         })
     </script>
 

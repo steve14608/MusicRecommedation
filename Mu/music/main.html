@@ -9,6 +9,7 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/iconfont.css' %}">
+
 </head>
 <body>
 
@@ -22,6 +23,7 @@
                 <input type="file" id="avatarUpload" class="avatar-upload" accept="image/jpeg" style="display:none;" onchange="handleFiles(this.files)"><br><br>
             </form>
             {% csrf_token %}
+
             <form id="userInfoForm">
                 <!-- 昵称 -->
                 <label for="nickname">昵称:</label><br>
@@ -57,11 +59,13 @@
             </div>
         </div>
 
+
         <!-- 推荐歌曲、歌手、播放历史 -->
         <div class="recommendations">
             <h2>推荐歌曲</h2>
              <ul class="item-container" id="item-container">
                 <li class="item">
+
                     <img src="https://via.placeholder.com/150" alt="歌曲1" onclick="console.log('a')">
                     <p>歌曲1</p>
                 </li>
@@ -130,6 +134,7 @@
                     <p>歌手6</p>
                 </li>
             </ul>
+
 
             <h2>播放历史</h2>
             <div class="item-container">

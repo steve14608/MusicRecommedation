@@ -36,7 +36,7 @@ def query(request_name, val):
     elif request_name == 'song_name':
         # return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
         cursor = connection.cursor()
-        cursor.execute('select distinct song_id,song_name,song_singer,song_singer_id from mus_songinfo where song_name '
+        cursor.execute('select distinct song_id,song_name,song_singer,song_singer_id from mus_songinfo where songname '
                        'like %s ', [val['song_name']])
         return cursor.fetchall()
     elif request_name == 'user_id':
@@ -61,6 +61,7 @@ def update(request_name, val):
         history.save()
     elif request_name == 'avatar':
         avatar = models.Avatar.objects.get(user_id=val['user_id'])
+
         avatar.avatar = val['avatar']
         avatar.save()
 

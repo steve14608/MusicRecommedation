@@ -117,6 +117,7 @@ h2 {
 
 .item {
     text-align: center;
+
 }
 
 .item img {
@@ -178,6 +179,7 @@ h2 {
 
 .progress-bar input {
     width: 100%; /* 让进度条填满容器的宽度 */
+
     margin-right: 10px;
 }
 
@@ -271,6 +273,7 @@ h2 {
 ul, li {
     list-style: none;
     }
+
 
 
 
