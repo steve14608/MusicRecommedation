@@ -1,15 +1,14 @@
 from django.http import HttpResponse, JsonResponse
-import database
+from . import database
 import json
 import os
 import urllib.parse
 from hashlib import md5
 from random import randrange
 import requests
+from .wangyiyun import wangyiyun
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from Mus import models
-from netease import wangyiyun
 
 
 # 前端搜索的功能
@@ -18,25 +17,19 @@ def searchSong(request):
     json_data = json.loads(raw_data)
     val = {"song_name": json_data['search']}
 
-    id_list = database.query('song_name', val['song_name'])
-    song_list = []
-    single = {}
-    if len(id_list) < 2:
+    data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
+    if len(data_list) < 2:
         data = wangyiyun().get_search(s=val['song_name'])
-        data = data['result']['songs']
-        for di in data:
-            single['song_id'] = di['id']
-            single['song_name'] = di['name']
-            single['song_singer'] = di['ar'][0]['name']
-            song_list.append(single)
+        song_list = [
+            {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
+             'song_singer_id': i['ar'][0]['id']} for i in data['result']['songs'][:10]
+        ]
     else:
-        for song_id in id_list:
-            song_info = database.query('song_info', song_id)
-            single['song_id'] = song_info.song_id
-            single['song_name'] = song_info.song_name
-            single['song_singer'] = song_info.song_singer
-            song_list.append(single)
-    return json.dumps(song_list)
+        data_list = data_list[:10]
+        song_list = [
+            {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
+        ]
+    return JsonResponse({'data': song_list}, status=200)
 
 
 # 根据song_id返回file
@@ -88,7 +81,7 @@ def getSong(request):
 
     jsdata = {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
               'cover': namev1['songs'][0]['al']['picUrl']}
-    return JsonResponse(jsdata)
+    return JsonResponse(jsdata, status=200)
 
 
 def getSongById(sid):
@@ -99,6 +92,18 @@ def getSongById(sid):
 
     return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
             'cover': namev1['songs'][0]['al']['picUrl']}
+
+
+def getSongBySingerId(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+    val = {'song_singer_id': json_data['song_singer_id']}
+    data = database.query(request_name='song_singer_id', val=val)  # songinfo的list
+    da = [
+        {'song_id': i.song_id, 'song_name': i.song_name, 'song_singer': i.song_singer,
+         'song_singer_id': i.song_singer_id} for i in data
+    ]
+    return JsonResponse({'data': da}, status=200)
 
 
 # 下面的函数都不用看

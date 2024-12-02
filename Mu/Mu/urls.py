@@ -38,4 +38,5 @@ urlpatterns = [
     path('getSong', song.getSong),
     path('getRecommend', user.get_recommendations),
     path('getRecommendSinger', user.get_recommend_singer),
+    path('getSongBySingerId', song.getSongBySingerId),
 ]

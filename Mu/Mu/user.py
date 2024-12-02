@@ -5,7 +5,7 @@ from django.shortcuts import render
 from . import database
 import time
 import os
-import song
+from . import song
 
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
@@ -113,10 +113,10 @@ def getHistory(request):
 
 # 获取音乐推荐
 def get_recommendations(request):
-
     global MUSIC_MODEL
+    val = {'user_id': request.COOKIES.get('user_id')}
 
-    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=request.COOKIES.get('user_id'))]
+    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
 
     recommendations = []
     for song_id in user_songs:
@@ -127,16 +127,16 @@ def get_recommendations(request):
     return HttpResponse('暂无数据', status=404)
 
 
-#获取歌手推荐
+# 获取歌手推荐
 def get_recommend_singer(request):
-
     global SINGER_MODEL
+    val = {'user_id': request.COOKIES.get('user_id')}
 
-    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=request.COOKIES.get('user_id'))]
+    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
     singer_ids = []
     for songid in user_songs:
-        queryda = database.query(request_name='singerid',val=songid)
-        if len(queryda)>0:
+        queryda = database.query(request_name='singer_id', val={'song_id': songid})
+        if len(queryda) > 0:
             singer_ids.append(queryda[0][0])
 
     recommendations = []

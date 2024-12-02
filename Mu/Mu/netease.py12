@@ -25,7 +25,7 @@ import random
 import time
 
 import requests
-from crypto.Cipher import AES
+from rypto.Cipher import AES
 from urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
