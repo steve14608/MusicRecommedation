@@ -32,7 +32,7 @@ def query(request_name, val):
         return cursor.fetchall()
     # 返回头图
     elif request_name == 'avatar':
-        return models.Avatar.objects.get(avatar_index=val['avatar_index']).avatar
+        return models.Avatar.objects.get(user_id=val['avatar_index']).avatar
     elif request_name == 'song_name':
         # return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
         cursor = connection.cursor()
@@ -60,7 +60,8 @@ def update(request_name, val):
         history.last_time = val['last_time']
         history.save()
     elif request_name == 'avatar':
-        avatar = models.Avatar.objects.get(avatar_index=val)
+        avatar = models.Avatar.objects.get(user_id=val['user_id'])
+
         avatar.avatar = val['avatar']
         avatar.save()
 
@@ -75,5 +76,5 @@ def insert(request_name, val):
         history = models.History(user_id=val['user_id'], song_id=val['song_id'], last_time=val['last_time'])
         history.save()
     elif request_name == 'avatar':
-        avatar = models.Avatar(avatar_index=val['user_id'])
+        avatar = models.Avatar(user_id=val['avatar_index'])
         avatar.save()
