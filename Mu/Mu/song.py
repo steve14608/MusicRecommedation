@@ -7,6 +7,7 @@ from hashlib import md5
 from random import randrange
 import requests
 from .wangyiyun import wangyiyun
+from lxml import etree
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
@@ -99,11 +100,45 @@ def getSongBySingerId(request):
     json_data = json.loads(raw_data)
     val = {'song_singer_id': json_data['song_singer_id']}
     data = database.query(request_name='song_singer_id', val=val)  # songinfo的list
-    da = [
-        {'song_id': i.song_id, 'song_name': i.song_name, 'song_singer': i.song_singer,
-         'song_singer_id': i.song_singer_id} for i in data
-    ]
-    return JsonResponse({'data': da}, status=200)
+    if len(data) < 4:
+        da = getSingerSongInfo(val['song_singer_id'])
+    else:
+        da = [
+            {'song_id': i.song_id, 'song_name': i.song_name} for i in data
+        ]
+    return JsonResponse({'singer_name': data[0].song_singer, 'singer_id': data[0].song_singer_id, 'data': da},
+                        status=200)
+
+
+def getSingerHeadPic(singer_id):
+    html = etree.HTML(
+        requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
+                                                                                                'NT 10.0;'
+                                                                                                'Win64; x64) '
+                                                                                                'AppleWebKit/537.36 ('
+                                                                                                'KHTML, like Gecko) '
+                                                                                                'Chrome/131.0.0.0 '
+                                                                                                'Safari/537.36'
+                                                                                                'Edg/131.0.0.0'}).content)
+    return html.xpath("//div[@class='n-artist f-cb']/img/@src")[0]
+
+
+def getSingerSongInfo(singer_id):
+    html = etree.HTML(
+        requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
+                                                                                                'NT 10.0;'
+                                                                                                'Win64; x64) '
+                                                                                                'AppleWebKit/537.36 ('
+                                                                                                'KHTML, like Gecko) '
+                                                                                                'Chrome/131.0.0.0 '
+                                                                                                'Safari/537.36'
+                                                                                                'Edg/131.0.0.0'}).content)
+    datalist = []
+    lista = html.xpath("//ul[@class='f-hide']/li/a/@href")
+    listb = html.xpath("//ul[@class='f-hide']/li/a").text
+    for i in range(0, len(lista) if len(lista) < 10 else 10):
+        datalist.append({'song_id': lista[i][9:], 'song_name': listb[i]})
+    return datalist
 
 
 # 下面的函数都不用看
@@ -138,7 +173,8 @@ def read_cookie():
 
 def post(url, params, cookie):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/91.0.4472.164 NeteaseMusicDesktop/2.10.2.200154',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 '
+                      'Chrome/91.0.4472.164 NeteaseMusicDesktop/2.10.2.200154',
         'Referer': '',
     }
     cookies = {
