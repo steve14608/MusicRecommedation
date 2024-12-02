@@ -61,7 +61,8 @@ def signup(request):
 
 # 更新头图
 def updateAvatar(request):
-    val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request['avatar']}
+    val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request.FILES.get('avatar')}
+
     database.update(request_name='avatar', val=val)
     return HttpResponse(status=200)
 
@@ -70,7 +71,8 @@ def updateAvatar(request):
 def updateInfo(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-    val = {'user_id': request.COOKIES.get('user_id'), 'user_bio': json_data['bio']}
+    val = {'user_id': request.COOKIES.get('user_id'),'user_nickname':json_data['user_nickname'], 'user_bio': json_data['user_bio']}
+
     database.update('user', val)
     return HttpResponse(status=200)
 

@@ -17,7 +17,6 @@
             <button class="active" id="loginTab">登录</button>
             <button id="registerTab">注册</button>
         </div>
-
         {%csrf_token%}
         <form id="loginForm" class="active" method="post" action="/login">
             <h2>登录</h2>
@@ -38,7 +37,7 @@
 
     <script src="../static/js/cookie.js"></script>
     <script>
-        // 切换登录和注册表单
+
         const loginTab = document.getElementById('loginTab');
         const registerTab = document.getElementById('registerTab');
         const loginForm = document.getElementById('loginForm');
@@ -58,9 +57,7 @@
             loginForm.classList.remove('active');
         });
 
-
         loginForm.addEventListener('submit',function(event){
-
 
             event.preventDefault();
 
@@ -69,22 +66,21 @@
             // 转换为 JSON 对象
             const jsonData = JSON.stringify(Object.fromEntries(formData.entries()));
 
-
             let xhr = new XMLHttpRequest();
-            xhr.open('POST', loginForm.action, true);
+            xhr.open('POST', '/login', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('X-CSRFToken',getCSRF())
-
-
+            xhr.send(jsonData);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    location.reload()
+                    let json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                    location.reload();
                 }
                 else if(xhr.readyState===4){
                     alert("账号或密码错误")
                 }
             };
-            xhr.send(jsonData);
         })
 
         registerForm.addEventListener('submit',function(event){
@@ -106,19 +102,22 @@
 
 
             let xhr = new XMLHttpRequest();
-            xhr.open('POST', registerForm.action, true);
+            xhr.open('POST', '/signup', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('X-CSRFToken',getCSRF());
-
+            xhr.send(jsonData);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    location.reload()
+                    let json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                    alert('注册成功！');
+                    location.reload();
                 }
                 else if(xhr.readyState===4){
-                    alert("账号或密码错误")
+                    alert("该账号已被注册！")
                 }
             };
-            xhr.send(jsonData);
+
         })
     </script>
 
