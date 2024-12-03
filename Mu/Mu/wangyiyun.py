@@ -83,6 +83,15 @@ class wangyiyun:
 
         return re.json()  # 返回结果
 
+    def get_data_no_cookie(self, msg, url):
+        encText, encSecKey = self.get_params(msg, self.e, self.f, self.g)  # 获取参数
+        params = {
+            "params": encText,
+            "encSecKey": encSecKey
+        }
+        re = requests.post(url=url, params=params, verify=False, timeout=3)
+        return re.json()
+
     # 返回搜索数据
     def get_search(self, hlpretag='<span class=\\"s-fc7\\">', hlposttag='</span>', s='', type='1', queryCorrect='false',
                    offset='0', total='true', limit='30', csrf_token=''):
@@ -91,3 +100,9 @@ class wangyiyun:
                     f',"queryCorrect":"{queryCorrect}","offset":"{offset}","total":"{total}",' \
                     f'"limit":"{limit}","csrf_token":"{csrf_token}"' + '}'
         return self.get_data(msg, url)
+
+    def getSongInfo(self, song_id, csrf_token=''):
+        msg = '{' + f'"id":"{song_id}",' + r'"c":"[{\"id\":\"' + str(
+            id) + r'\"}]",' + f'"csrf_token":"{csrf_token}"' + '}'
+        url = f'https://music.163.com/weapi/v3/song/detail?csrf_token={csrf_token}'
+        return self.get_data_no_cookie(msg, url)

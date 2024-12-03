@@ -23,13 +23,19 @@ def searchSong(request):
         data = wangyiyun().get_search(s=val['song_name'])
         song_list = [
             {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
-             'song_singer_id': i['ar'][0]['id']} for i in data['result']['songs'][:10]
+             'song_singer_id': i['ar'][0]['id'], 'song_album': i['al']['name'], 'song_duration': i['dt']}
+            for i in data['result']['songs'][:10]
         ]
     else:
         data_list = data_list[:10]
-        song_list = [
-            {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
-        ]
+        song_list = []
+        for i in data_list:
+            da = wangyiyun().getSongInfo(song_id=i[0])
+            song_list.append({'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3],
+                              'song_album': da['al']['name'], 'song_duration': da['result']['dt']})
+        # song_list = [
+        #     {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
+        # ]
     return JsonResponse({'data': song_list}, status=200)
 
 
