@@ -36,8 +36,10 @@ def query(request_name, val):
     elif request_name == 'song_name':
         # return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
         cursor = connection.cursor()
-        cursor.execute('select distinct song_id,song_name,song_singer,song_singer_id from mus_songinfo where songname '
-                       'like %s ', [val['song_name']])
+        cursor.execute('select min(song_id) song_id,b.song_name,b.song_singer,b.song_singer_id from '
+                       '(select distinct song_name,song_singer,song_singer_id from mus_songinfo where'
+                       ' song_name like %s ) as b join mus_songinfo on mus_songinfo.song_name = b.song_name'
+                       ' group by song_name,song_singer,song_singer_id;', [val['song_name']])
         return cursor.fetchall()
     elif request_name == 'user_id':
         return models.User.objects.filter(user_id=val['user_id'])
