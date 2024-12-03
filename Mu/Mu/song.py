@@ -32,7 +32,7 @@ def searchSong(request):
         for i in data_list:
             da = wangyiyun().getSongInfo(song_id=i[0])
             song_list.append({'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3],
-                              'song_album': da['al']['name'], 'song_duration': da['result']['dt']})
+                              'song_album': da['songs'][0]['al']['name'], 'song_duration': da['songs'][0]['dt']})
         # song_list = [
         #     {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
         # ]
