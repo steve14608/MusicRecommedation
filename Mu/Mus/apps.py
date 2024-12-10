@@ -1,19 +1,12 @@
 from django.apps import AppConfig
-import pickle
-
-MODEL = None
-
-
+from .model_manager import model_manager
 class MusConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'Mus'
 
     def ready(self):
-        """
-        项目启动时加载模型到内存。
-        """
-        global MODEL
-        model_path = "F:/itemcf_model.pkl"
-        with open(model_path, "rb") as f:
-            MODEL = pickle.load(f)
-        print("Model loaded successfully!")
+        model_manager.load_models(
+            "F:/itemcf_model.pkl",
+            "F:/itemcf_singerid_model.pkl"
+        )
+        print("Models loaded successfully!")

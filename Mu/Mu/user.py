@@ -5,7 +5,8 @@ from django.shortcuts import render
 from . import database
 import time
 import os
-
+from . import song
+from Mus.model_manager import model_manager
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
 def page(request):
@@ -47,7 +48,7 @@ def signup(request):
     if database.query(request_name='user_account', val=val):
         return HttpResponse(status=404)
     else:
-        ti = time.time()
+        ti = int(time.time())
         user = {'user_account': val['user_account'], 'user_password': val['user_password'], 'user_id': ti,
                 'user_avatar': ti, 'user_bio': '无', 'user_nickname': '默认'}
         database.insert(request_name='user', val=user)
@@ -60,8 +61,7 @@ def signup(request):
 
 # 更新头图
 def updateAvatar(request):
-
-    val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request['avatar']}
+    val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request.FILES.get('avatar')}
     database.update(request_name='avatar', val=val)
     return HttpResponse(status=200)
 
@@ -70,7 +70,7 @@ def updateAvatar(request):
 def updateInfo(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-    val = {'user_id': request.COOKIES.get('user_id'), 'user_bio': json_data['bio']}
+    val = {'user_id': request.COOKIES.get('user_id'),'user_nickname':json_data['user_nickname'], 'user_bio': json_data['user_bio']}
     database.update('user', val)
     return HttpResponse(status=200)
 
@@ -95,38 +95,80 @@ def updateHistory(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
     val = {'user_id': request.COOKIES.get('user_id'), 'song_id': json_data['song_id'], 'last_time': time.time()}
-    database.update(request_name='history', val=val)
+    if database.query(request_name='user_history_exist',val = val):
+        database.update(request_name='history', val=val)
+    else:
+        database.insert(request_name='history',val=val)
     return HttpResponse(status=200)
 
 
 def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
-    items = database.query(request_name='user_history', val=val)
+    ids = database.query(request_name='user_history', val=val)[:8]
     data = [
-        {
-            'id': item.id,
-            'name': item.name,
-            'description': item.description,
-        } for item in items
+    song.getSongById(sid.song_id) for sid in ids
     ]
     return JsonResponse({'items': data})
 
 
+# 获取音乐推荐
 def get_recommendations(request):
-    """
-    根据用户的听歌记录生成推荐。
-    """
-    global MODEL  # 使用全局加载的模型
+    MUSIC_MODEL = model_manager.MUSIC_MODEL
+    val = {'user_id': request.COOKIES.get('user_id')}
 
-    # 获取用户的听歌记录（例如通过 POST 提交的 JSON 数据）
-    user_data = request.POST.getlist("user_history")  # 假设发送的是歌曲 ID 列表
-    user_songs = [int(song_id) for song_id in user_data]
+    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs):
+        data_list = [
+            song.getSongById(i['song_id']) for i in database.query(request_name='most_listened_song',val=None)
+        ]
+        return JsonResponse({"recommendations": data_list}, status=200)
 
-    # 使用模型生成推荐（假设 MODEL 是一个 ItemCF 模型）
     recommendations = []
     for song_id in user_songs:
-        if song_id in MODEL:
-            recommendations.extend(sorted(MODEL[song_id].items(), key=lambda x: -x[1])[:5])
+        if song_id in MUSIC_MODEL:
+            recommendations.extend(MUSIC_MODEL[song_id])
+    sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
+    top_recommendations = [song_id for song_id, _ in sorted_recommendations[:8]]
+    if len(top_recommendations) > 0:
+        data_list = [
+            song.getSongById(i) for i in top_recommendations
+        ]
+        return JsonResponse({"recommendations": data_list}, status=200)
+    return HttpResponse('暂无数据', status=404)
 
-    # 返回 JSON 响应
-    return JsonResponse({"recommendations": recommendations})
+
+# 获取歌手推荐
+def get_recommend_singer(request):
+    SINGER_MODEL = model_manager.SINGER_MODEL
+    val = {'user_id': request.COOKIES.get('user_id')}
+
+    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs) == 0:
+        data = [
+            {'singer_id': i['song_singer_id'], 'singer_pic': song.getSingerHeadPic(i['song_singer_id'])} for i in
+            database.query(request_name='most_listened_singer', val=None)
+        ]
+        return JsonResponse({'data': data}, status=200)
+
+    singer_ids = []
+    for songid in user_songs:
+        queryda = database.query(request_name='singer_id', val={'song_id': songid})
+        if len(queryda) > 0:
+            singer_ids.append(queryda[0][0])
+
+    recommendations = []
+    for singer_id in singer_ids:
+        if singer_id in SINGER_MODEL:
+            recommendations.extend(SINGER_MODEL[singer_id])
+
+    sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
+    top_recommendations = [singer_id for singer_id, _ in sorted_recommendations[:8]]
+    if len(top_recommendations) > 0:
+        # return JsonResponse({"recommendations": recommendations}, status=200)
+        data = [
+            {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
+            top_recommendations
+        ]
+        return JsonResponse({'data': data}, status=200)
+    return HttpResponse('暂无数据', status=404)
+

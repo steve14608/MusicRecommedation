@@ -80,7 +80,7 @@ DATABASES = {
     {
         'ENGINE': 'django.db.backends.mysql',    # 数据库引擎
         'NAME': 'data', # 数据库名称
-        'HOST': '127.0.0.1', # 数据库地址，本机 ip 地址 127.0.0.1
+        'HOST': '192.168.137.1', # 数据库地址，本机 ip 地址 127.0.0.1
         'PORT': 3306, # 端口
         'USER': 'root',  # 数据库用户名
         'PASSWORD': '123456', # 数据库密码
@@ -123,9 +123,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # 如果你的 static 文件夹在项目根目录
 ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

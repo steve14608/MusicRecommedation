@@ -1,15 +1,15 @@
 from django.http import HttpResponse, JsonResponse
-import database
+from . import database
 import json
 import os
 import urllib.parse
 from hashlib import md5
 from random import randrange
 import requests
+from .wangyiyun import wangyiyun
+from lxml import etree
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from Mus import models
-from netease import wangyiyun
 
 
 # 前端搜索的功能
@@ -18,25 +18,15 @@ def searchSong(request):
     json_data = json.loads(raw_data)
     val = {"song_name": json_data['search']}
 
-    id_list = database.query('song_name', val)
-    song_list = []
-    single = {}
-    if len(id_list) < 2:
-        data = wangyiyun().get_search(s=val['song_name'])
-        data = data['result']['songs']
-        for di in data:
-            single['song_id'] = di['id']
-            single['song_name'] = di['name']
-            single['song_singer'] = di['ar'][0]['name']
-            song_list.append(single)
-    else:
-        for song_id in id_list:
-            song_info = database.query('song_info', song_id)
-            single['song_id'] = song_info.song_id
-            single['song_name'] = song_info.song_name
-            single['song_singer'] = song_info.song_singer
-            song_list.append(single)
-    return json.dumps(song_list)
+    # data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
+    data = wangyiyun().get_search(s=val['song_name'])
+    song_list = [
+        {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
+         'song_singer_id': i['ar'][0]['id'], 'song_album': i['al']['name'], 'song_duration': i['dt']}
+        for i in data['result']['songs'][:10]
+    ]
+    return JsonResponse({'data': song_list}, status=200)
+
 
 
 # 根据song_id返回file
@@ -68,12 +58,12 @@ def getSongCover(request):
 def getSongLyrics(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-
+    print(json_data)
     jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-    return HttpResponse(lyricv1['lrc']['lyric'])
+    return JsonResponse({'lyric':lyricv1['lrc']['lyric']})
 
 
 # 返回歌曲封面、作者、歌名
@@ -88,7 +78,63 @@ def getSong(request):
 
     jsdata = {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
               'cover': namev1['songs'][0]['al']['picUrl']}
-    return JsonResponse(jsdata)
+    return JsonResponse(jsdata, status=200)
+
+
+def getSongById(sid):
+    jsondata = str(sid)
+    cookies = parse_cookie(read_cookie())
+    urlv1 = url_v1(ids(jsondata), 'standard', cookies)
+    namev1 = name_v1(urlv1['data'][0]['id'])
+
+    return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
+            'cover': namev1['songs'][0]['al']['picUrl'],'song_id':sid}
+
+
+def getSongBySingerId(request):
+    raw_data = request.body.decode("utf-8")
+    json_data = json.loads(raw_data)
+    val = {'song_singer_id': json_data['song_singer_id']}
+    data = database.query(request_name='song_singer_id', val=val)  # songinfo的list
+    if len(data) < 4:
+        da = getSingerSongInfo(val['song_singer_id'])
+    else:
+        da = [
+            {'song_id': i.song_id, 'song_name': i.song_name} for i in data
+        ]
+    return JsonResponse({'singer_name': data[0].song_singer, 'singer_id': data[0].song_singer_id, 'data': da},
+                        status=200)
+
+
+def getSingerHeadPic(singer_id):
+    html = etree.HTML(
+        requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
+                                                                                                'NT 10.0;'
+                                                                                                'Win64; x64) '
+                                                                                                'AppleWebKit/537.36 ('
+                                                                                                'KHTML, like Gecko) '
+                                                                                                'Chrome/131.0.0.0 '
+                                                                                                'Safari/537.36'
+                                                                                                'Edg/131.0.0.0'}).content)
+    return html.xpath("//div[@class='n-artist f-cb']/img/@src")[0]
+
+
+def getSingerSongInfo(singer_id):
+    html = etree.HTML(
+        requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
+                                                                                                'NT 10.0;'
+                                                                                                'Win64; x64) '
+                                                                                                'AppleWebKit/537.36 ('
+                                                                                                'KHTML, like Gecko) '
+                                                                                                'Chrome/131.0.0.0 '
+                                                                                                'Safari/537.36'
+                                                                                                'Edg/131.0.0.0'}).content)
+    datalist = []
+    lista = html.xpath("//ul[@class='f-hide']/li/a/@href")
+    listb = html.xpath("//ul[@class='f-hide']/li/a").text
+    for i in range(0, len(lista) if len(lista) < 10 else 10):
+        datalist.append({'song_id': lista[i][9:], 'song_name': listb[i]})
+    return datalist
 
 
 # 下面的函数都不用看
@@ -123,7 +169,8 @@ def read_cookie():
 
 def post(url, params, cookie):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/91.0.4472.164 NeteaseMusicDesktop/2.10.2.200154',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 '
+                      'Chrome/91.0.4472.164 NeteaseMusicDesktop/2.10.2.200154',
         'Referer': '',
     }
     cookies = {
