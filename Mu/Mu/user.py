@@ -71,7 +71,8 @@ def updateAvatar(request):
 def updateInfo(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-    val = {'user_id': request.COOKIES.get('user_id'),'user_nickname':json_data['user_nickname'], 'user_bio': json_data['user_bio']}
+    val = {'user_id': request.COOKIES.get('user_id'), 'user_nickname': json_data['user_nickname'],
+           'user_bio': json_data['user_bio']}
 
     database.update('user', val)
     return HttpResponse(status=200)
@@ -97,7 +98,10 @@ def updateHistory(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
     val = {'user_id': request.COOKIES.get('user_id'), 'song_id': json_data['song_id'], 'last_time': time.time()}
-    database.update(request_name='history', val=val)
+    if database.query(request_name='user_history_exist', val=val):
+        database.update(request_name='history', val=val)
+    else:
+        database.insert(request_name='history', val=val)
     return HttpResponse(status=200)
 
 
@@ -119,6 +123,11 @@ def get_recommendations(request):
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs):
+        data_list = [
+            song.getSongById(i['song_id']) for i in database.query(request_name='most_listened_song',val=None)
+        ]
+        return JsonResponse({"recommendations": data_list}, status=200)
 
     recommendations = []
     for song_id in user_songs:
@@ -138,6 +147,13 @@ def get_recommend_singer(request):
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs) == 0:
+        data = [
+            {'singer_id': i['song_singer_id'], 'singer_pic': song.getSingerHeadPic(i['song_singer_id'])} for i in
+            database.query(request_name='most_listened_singer', val=None)
+        ]
+        return JsonResponse({'data': data}, status=200)
+
     singer_ids = []
     for songid in user_songs:
         queryda = database.query(request_name='singer_id', val={'song_id': songid})
@@ -156,4 +172,3 @@ def get_recommend_singer(request):
         ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)
-

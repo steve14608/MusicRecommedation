@@ -18,24 +18,13 @@ def searchSong(request):
     json_data = json.loads(raw_data)
     val = {"song_name": json_data['search']}
 
-    data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
-    if len(data_list) < 2:
-        data = wangyiyun().get_search(s=val['song_name'])
-        song_list = [
-            {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
-             'song_singer_id': i['ar'][0]['id'], 'song_album': i['al']['name'], 'song_duration': i['dt']}
-            for i in data['result']['songs'][:10]
-        ]
-    else:
-        data_list = data_list[:10]
-        song_list = []
-        for i in data_list:
-            da = wangyiyun().getSongInfo(song_id=i[0])
-            song_list.append({'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3],
-                              'song_album': da['songs'][0]['al']['name'], 'song_duration': da['songs'][0]['dt']})
-        # song_list = [
-        #     {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
-        # ]
+    # data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
+    data = wangyiyun().get_search(s=val['song_name'])
+    song_list = [
+        {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
+         'song_singer_id': i['ar'][0]['id'], 'song_album': i['al']['name'], 'song_duration': i['dt']}
+        for i in data['result']['songs'][:10]
+    ]
     return JsonResponse({'data': song_list}, status=200)
 
 
