@@ -87,7 +87,7 @@ def getSongById(sid):
     namev1 = name_v1(urlv1['data'][0]['id'])
 
     return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
-            'cover': namev1['songs'][0]['al']['picUrl']}
+            'cover': namev1['songs'][0]['al']['picUrl'], 'song_id': sid}
 
 
 def getSongBySingerId(request):

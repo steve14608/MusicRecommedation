@@ -111,10 +111,7 @@ def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
     ids = database.query(request_name='user_history', val=val)[:8]
     data = [
-        {
-            'song_id': sid.song_id,
-            'basicInfo': song.getSongById(sid.song_id)
-        } for sid in ids
+        song.getSongById(sid.song_id) for sid in ids
     ]
     return JsonResponse({'items': data})
 
