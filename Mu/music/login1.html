@@ -36,87 +36,13 @@
 
     <script src="../static/js/cookie.js"></script>
     <script>
-        const loginTab = document.getElementById('loginTab');
         const registerTab = document.getElementById('registerTab');
-        const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
-
-        loginTab.addEventListener('click', () => {
-            loginTab.classList.add('active');
-            registerTab.classList.remove('active');
-            loginForm.classList.add('active');
-            registerForm.classList.remove('active');
-        });
-        registerTab.addEventListener('click', () => {
-            registerTab.classList.add('active');
-            loginTab.classList.remove('active');
-            registerForm.classList.add('active');
-            loginForm.classList.remove('active');
-        });
-        loginForm.addEventListener('submit',function(event){
-
-            event.preventDefault();
-
-            const form = event.target; // 当前表单
-            const formData = new FormData(form);
-            // 转换为 JSON 对象
-            const jsonData = JSON.stringify(Object.fromEntries(formData.entries()));
-
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '/login', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('X-CSRFToken',getCSRF())
-            xhr.send(jsonData);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    let json = JSON.parse(xhr.responseText);
-                    console.log(json);
-                    location.reload();
-                }
-                else if(xhr.readyState===4){
-                    alert("账号或密码错误")
-                }
-            };
-
-        })
-
-        registerForm.addEventListener('submit',function(event){
-
-            event.preventDefault();
-
-            const ensure = document.getElementById('ensure')
-            const form = event.target; // 当前表单
-            const formData = new FormData(form);
-            const jso = Object.fromEntries(formData.entries())
-
-            // 转换为 JSON 对象
-            const jsonData = JSON.stringify(jso);
-
-            if(jso['user_password'] !==ensure.value){
-                alert("两次密码不一致，检查输入")
-                return
-            }
-
-
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '/signup', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('X-CSRFToken',getCSRF());
-            xhr.send(jsonData);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    let json = JSON.parse(xhr.responseText);
-                    console.log(json);
-                    alert('注册成功！');
-                    location.reload();
-                }
-                else if(xhr.readyState===4){
-                    alert("该账号已被注册！")
-                }
-            };
-
-        })
+        const loginForm = document.getElementById('loginForm');
+        const loginTab = document.getElementById('loginTab');
     </script>
+    <script src="../static/js/login.js"></script>
+    <script src="../static/js/register.js"></script>
 
 </body>
 </html>

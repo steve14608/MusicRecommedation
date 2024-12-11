@@ -62,7 +62,8 @@ def getSongLyrics(request):
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-    return HttpResponse(lyricv1['lrc']['lyric'])
+    # return HttpResponse(lyricv1['lrc']['lyric'])
+    return JsonResponse({'lyrics': lyricv1['lrc']['lyric']}, status=200)
 
 
 # 返回歌曲封面、作者、歌名
@@ -93,19 +94,20 @@ def getSongById(sid):
 def getSongBySingerId(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
+    print(json_data)
     val = {'song_singer_id': json_data['song_singer_id']}
     data = database.query(request_name='song_singer_id', val=val)  # songinfo的list
     if len(data) < 4:
-        da = getSingerSongInfo(val['song_singer_id'])
+        da = getSingerSongInfo(val['song_singer_id'])[:10]
     else:
         da = [
-            {'song_id': i.song_id, 'song_name': i.song_name} for i in data
+            {'song_id': i.song_id, 'song_name': i.song_name} for i in data[:10]
         ]
     return JsonResponse({'singer_name': data[0].song_singer, 'singer_id': data[0].song_singer_id, 'data': da},
                         status=200)
 
 
-def getSingerHeadPic(singer_id):
+def getSingerInfo(singer_id):
     html = etree.HTML(
         requests.get(url=f'https://music.163.com/artist?id={singer_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows '
                                                                                                 'NT 10.0;'
@@ -115,7 +117,7 @@ def getSingerHeadPic(singer_id):
                                                                                                 'Chrome/131.0.0.0 '
                                                                                                 'Safari/537.36'
                                                                                                 'Edg/131.0.0.0'}).content)
-    return html.xpath("//div[@class='n-artist f-cb']/img/@src")[0]
+    return html.xpath("//div[@class='n-artist f-cb']/img/@src")[0], html.xpath("//h2[@id='artist-name']")[0].text
 
 
 def getSingerSongInfo(singer_id):

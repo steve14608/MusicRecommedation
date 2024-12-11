@@ -1,4 +1,3 @@
-
 const historyContainer=document.getElementById('songHistory');
 window.addEventListener('DOMContentLoaded',function(){
     let xhr = new XMLHttpRequest();

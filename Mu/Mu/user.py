@@ -7,7 +7,7 @@ from . import database
 import time
 import os
 from . import song
-from Mus import model_manager
+from Mus.model_manager import model_manager
 
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
@@ -17,8 +17,10 @@ def page(request):
     else:
         temp = database.query(request_name='user_id', val={'user_id': request.COOKIES.get('user_id')})
         if len(temp) == 0:
-            request.delete_cookie('user_id')
-            return render(request, 'login1.html')
+            # request.delete_cookie('user_id')
+            temp = render(request, 'login1.html')
+            temp.delete_cookie('user_id')
+            return temp
         return render(request, 'main.html')
 
 
@@ -113,7 +115,7 @@ def getHistory(request):
     data = [
         song.getSongById(sid.song_id) for sid in ids
     ]
-    return JsonResponse({'items': data})
+    return JsonResponse({'items': data}, status=200)
 
 
 # 获取音乐推荐
@@ -121,10 +123,10 @@ def get_recommendations(request):
     MUSIC_MODEL = model_manager.MUSIC_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
-    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
-    if len(user_songs):
+    user_songs = [hi.song_id for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs) == 0:
         data_list = [
-            song.getSongById(i['song_id']) for i in database.query(request_name='most_listened_song', val=None)
+            song.getSongById(i[0]) for i in database.query(request_name='most_listened_song', val=None)
         ]
         return JsonResponse({"recommendations": data_list}, status=200)
 
@@ -151,10 +153,10 @@ def get_recommend_singer(request):
     SINGER_MODEL = model_manager.SINGER_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
-    user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    user_songs = [hi.song_id for hi in database.query(request_name='user_history', val=val)]
     if len(user_songs) == 0:
         data = [
-            {'singer_id': i['song_singer_id'], 'singer_pic': song.getSingerHeadPic(i['song_singer_id'])} for i in
+            {'singer_id': i[0], 'singer_pic': song.getSingerHeadPic(i[0])} for i in
             database.query(request_name='most_listened_singer', val=None)
         ]
         return JsonResponse({'data': data}, status=200)
@@ -177,9 +179,13 @@ def get_recommend_singer(request):
     ]
     if len(recommendations) > 0:
         # return JsonResponse({"recommendations": recommendations}, status=200)
-        data = [
-            {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
-            recommendations
-        ]
+        data = []
+        for i in recommendations:
+            temp = song.getSingerInfo(i)
+            data.append({'singer_id': i, 'singer_pic': temp[0], 'singer_name': temp[1]})
+        # data = [
+        #     {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
+        #     recommendations
+        # ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)

@@ -62,7 +62,7 @@ def query(request_name, val):
     elif request_name == 'most_listened_singer':
         cursor = connection.cursor()
         cursor.execute('select song_singer_id from (select song_singer_id,count(song_singer_id) cou'
-                        ' from mus_song_info group by song_singer_id order by cou desc limit 10)')
+                        ' from mus_songinfo group by song_singer_id order by cou desc limit 10) t')
 
         return cursor.fetchall()
 

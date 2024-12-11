@@ -207,7 +207,6 @@ h2 {
     color: white;
     font-size: 20px;
     margin: 0 10px;
-
     cursor: pointer;
 }
 
@@ -222,7 +221,6 @@ h2 {
 
 .progress-bar input {
     width: 100%;
-
     margin-right: 10px;
 }
 
@@ -303,4 +301,7 @@ h2 {
 ul, li {
     list-style: none;
     }
+
+
+
 

@@ -1,4 +1,3 @@
-
 const recSongContainer=document.getElementById('recommendSong');
 window.addEventListener('DOMContentLoaded',function(){
     let xhr = new XMLHttpRequest();
@@ -8,10 +7,10 @@ window.addEventListener('DOMContentLoaded',function(){
     xhr.send();
     xhr.onreadystatechange=function(){
         if(xhr.readyState==4 && xhr.status == 200){
-            let recommendatinData;
-            recommendatinData=JSON.parse(xhr.responseText);
-            dynamicAppendSong(recommendatinData['recommendations'],recSongContainer);
-            console.log(recommendatinData['recommendations']);
+            let recommendationData;
+            recommendationData=JSON.parse(xhr.responseText);
+            dynamicAppendSong(recommendationData['recommendations'],recSongContainer);
+            console.log(recommendationData['recommendations']);
         }
     }
 })

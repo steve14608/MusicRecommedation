@@ -14,6 +14,3 @@ function getCSRF() {
     }
     return cookieValue;
 }
-function logout(){
-
-}

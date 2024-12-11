@@ -7,11 +7,10 @@ window.addEventListener('DOMContentLoaded',function(){
     xhr.send();
     xhr.onreadystatechange=function(){
         if(xhr.readyState==4 && xhr.status == 200){
-            console.log
-            let recommendatinData;
-            recommendatinData=JSON.parse(xhr.responseText);
-            // dynamicAppendSinger(recommendatinData['data'],recSongContainer);
-            console.log(recommendatinData['data']);
+            let recommendationData;
+            recommendationData=JSON.parse(xhr.responseText);
+            dynamicAppendSinger(recommendationData['data'],recSingerContainer);
+            console.log(recommendationData['data']);
         }
     }
 })

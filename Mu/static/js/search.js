@@ -1,25 +1,6 @@
-let jsonReturnData;
 let dataLength;
-
 let res;
-let lyricArray=[];
-let cur;
-
-const songCover = document.getElementById('cover');
-const songName = document.getElementById('song-title');
-const songSinger = document.getElementById('song-artist');
-const audio = document.getElementById('audio');
-const progressBar = document.querySelector('.progress');
-const songCurrentTime=document.querySelector('.current-time');
-const songEndTime=document.querySelector('.duration');
-const displayButton=document.querySelector('.play-pause');
-const prevButton=document.querySelector('.prev');
-const nextButton=document.querySelector('.next');
-const lyricsContainer = document.getElementById('lyrics');
 const searchForm=document.getElementById('search-form');
-const lyricontent = document.getElementById('lyrics')
-const searchResults = document.getElementById('searchResults');
-const searchContent = document.getElementById('searchContent');
 searchForm.addEventListener('submit',function(event){
     event.preventDefault();
     const form = event.target;
@@ -33,10 +14,10 @@ searchForm.addEventListener('submit',function(event){
     xhr.onreadystatechange=function(){
         if(xhr.readyState==4&&xhr.status==200){
             let json=JSON.parse(xhr.responseText);
-            jsonReturnData=json['data'];
+            let jsonReturnData=json['data'];
             dataLength=jsonReturnData.length;
             console.log(jsonReturnData);
-            document.querySelector('.search-form').addEventListener('submit', handleSearchSubmit(event,jsonReturnData));
+            handleSearchSubmit(event,jsonReturnData);
         }
         else if(xhr.readyState==4){
             alert('请重新输入您要搜索的内容')
@@ -50,7 +31,6 @@ function handleSearchSubmit(event,jsonReturnData) {
 }
 // 显示搜索结果的函数
 function displaySearchResults(jsonReturnData) {
-
     searchContent.innerHTML = '';
     var table = document.createElement('table');
     table.className = 'search-results-table'; 
@@ -70,7 +50,6 @@ function displaySearchResults(jsonReturnData) {
     for(i=0;i<dataLength;i++){
         var row = document.createElement('tr');
         // 封面与音乐标题列
-
         // var coverImg = document.createElement('img');
         // if(i<dataLength){
         //     coverImg.src = jsonReturnData[i].cover; // 假设result对象中有cover属性
@@ -79,7 +58,6 @@ function displaySearchResults(jsonReturnData) {
         //     titleCell.appendChild(coverImg);
         // }
         var titleCell = document.createElement('td');
-
         var titleSpan = document.createElement('span');
         titleSpan.textContent = jsonReturnData[i].song_name;
         titleCell.appendChild(titleSpan);
@@ -116,7 +94,6 @@ function displaySearchResults(jsonReturnData) {
                     console.log('更新完成');
                 }
             };
-        
             let xhr1=new XMLHttpRequest;
             xhr1.open('POST','/getSongLyrics',true);
             xhr1.setRequestHeader('Content-Type', 'application/json');
@@ -125,12 +102,13 @@ function displaySearchResults(jsonReturnData) {
                 'song_id':this.id
             };
             xhr1.send(JSON.stringify(jsData1));
+            console.log("fuck1");
             xhr1.onreadystatechange=function(){
                 if(xhr1.readyState==4&&xhr1.status==200){
                     lyricArray = [];
                     cur = 0;
                     let data=JSON.parse(xhr1.responseText);
-                    let lyrics=data['lyric'];
+                    let lyrics=data['lyrics'];
                     processLyric(lyrics);
                     // console.log(lyricArray);
                 }
@@ -172,10 +150,6 @@ function displaySearchResults(jsonReturnData) {
                 }
             };
         }
-        songName.textContent=item.song_name;
-        listItem.appendChild(cover);
-        listItem.appendChild(songname); 
-        container.appendChild(listItem);
         playCell.appendChild(playButton);
         row.appendChild(playCell);
         console.log(row);
@@ -195,20 +169,5 @@ function displaySearchResults(jsonReturnData) {
     searchResults.style.display = 'block';
     document.querySelector('.recommendations').style.display = 'none';
 }
-// 返回到主内容的函数
-function backToMainContent() {
 
-    const searchResults = document.getElementById('searchResults');
-    // const recommendations = document.querySelector('.recommendations');
-    // 隐藏搜索结果容器，显示原始内容
-    searchResults.style.display = 'none';
-    recommendations.style.display = 'block';
-
-}
-//处理时间
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-}
 
