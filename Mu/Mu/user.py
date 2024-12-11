@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -6,6 +7,7 @@ from . import database
 import time
 import os
 from . import song
+from Mus import model_manager
 
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
@@ -110,8 +112,8 @@ def getHistory(request):
     ids = database.query(request_name='user_history', val=val)[:8]
     data = [
         {
-            'songid': sid.songid,
-            'basicInfo': song.getSongById(sid.songid)
+            'song_id': sid.song_id,
+            'basicInfo': song.getSongById(sid.song_id)
         } for sid in ids
     ]
     return JsonResponse({'items': data})
@@ -119,20 +121,26 @@ def getHistory(request):
 
 # 获取音乐推荐
 def get_recommendations(request):
-    global MUSIC_MODEL
+    MUSIC_MODEL = model_manager.MUSIC_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
     if len(user_songs):
         data_list = [
-            song.getSongById(i['song_id']) for i in database.query(request_name='most_listened_song',val=None)
+            song.getSongById(i['song_id']) for i in database.query(request_name='most_listened_song', val=None)
         ]
         return JsonResponse({"recommendations": data_list}, status=200)
 
-    recommendations = []
+    merged_recommendations = defaultdict(float)
     for song_id in user_songs:
         if song_id in MUSIC_MODEL:
-            recommendations.extend(sorted(MUSIC_MODEL[song_id].items(), key=lambda x: -x[1])[:8])
+            for recommended_songid, score in MUSIC_MODEL[song_id]:
+                if recommended_songid not in user_songs:
+                    merged_recommendations[recommended_songid] += score
+    recommendations = sorted(merged_recommendations.items(), key=lambda x: x[1], reverse=True)[:10]
+    recommendations = [
+        int(i[0]) for i in recommendations
+    ]
     if len(recommendations) > 0:
         data_list = [
             song.getSongById(i) for i in recommendations
@@ -143,7 +151,7 @@ def get_recommendations(request):
 
 # 获取歌手推荐
 def get_recommend_singer(request):
-    global SINGER_MODEL
+    SINGER_MODEL = model_manager.SINGER_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
@@ -160,10 +168,16 @@ def get_recommend_singer(request):
         if len(queryda) > 0:
             singer_ids.append(queryda[0][0])
 
-    recommendations = []
+    merged_recommendations = defaultdict(float)
     for singer_id in singer_ids:
         if singer_id in SINGER_MODEL:
-            recommendations.extend(sorted(SINGER_MODEL[singer_id].items(), key=lambda x: -x[1])[:8])
+            for recommended_singer_id, score in SINGER_MODEL[singer_id]:
+                if recommended_singer_id not in singer_ids:
+                    merged_recommendations[recommended_singer_id] += score
+    recommendations = sorted(merged_recommendations.items(), key=lambda x: x[1], reverse=True)[:10]
+    recommendations = [
+        int(i[0]) for i in recommendations
+    ]
     if len(recommendations) > 0:
         # return JsonResponse({"recommendations": recommendations}, status=200)
         data = [

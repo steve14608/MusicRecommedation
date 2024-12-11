@@ -3,15 +3,9 @@ import pickle
 
 
 def load_similarity_dict(file_path):
-    similarity_dict = {}
-    with open(file_path, "rb") as f:
-        while True:
-            try:
-                chunk = pickle.load(f)
-                similarity_dict.update(chunk)
-            except EOFError:
-                break
-    return similarity_dict
+    with open(file_path, 'rb') as file:
+        recommendations = pickle.load(file)
+    return recommendations
 
 
 class ModelManager:
