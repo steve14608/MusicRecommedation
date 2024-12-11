@@ -1,8 +1,7 @@
 from django.apps import AppConfig
 import pickle
+from . import model_manager
 
-MUSIC_MODEL = None
-SINGER_MODEL = None
 
 
 class MusConfig(AppConfig):
@@ -13,10 +12,5 @@ class MusConfig(AppConfig):
         """
         项目启动时加载模型到内存。
         """
-        global MUSIC_MODEL
-        global SINGER_MODEL
-        with open("F:/itemcf_model.pkl", "rb") as f:
-            MUSIC_MODEL = pickle.load(f)
-        with open("F:/itemcf_singerid_model.pkl", 'rb') as f:
-            SINGER_MODEL = pickle.load(f)
+        model_manager.model_manager.load_models("F:/song.pkl","F:/singer.pkl")
         print("Model loaded successfully!")
