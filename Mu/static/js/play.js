@@ -2,7 +2,6 @@ const scrollContainer=document.querySelectorAll('item-container');
 let isDragging = false; 
 let startX;
 let scrollLeft;
-//处理监听事件
 audio.addEventListener('timeupdate',function(){
     let curTime=audio.currentTime;
     render(curTime);
