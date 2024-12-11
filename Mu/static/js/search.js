@@ -1,5 +1,6 @@
 let jsonReturnData;
 let dataLength;
+
 let res;
 let lyricArray=[];
 let cur;
@@ -19,7 +20,6 @@ const searchForm=document.getElementById('search-form');
 const lyricontent = document.getElementById('lyrics')
 const searchResults = document.getElementById('searchResults');
 const searchContent = document.getElementById('searchContent');
-
 searchForm.addEventListener('submit',function(event){
     event.preventDefault();
     const form = event.target;
@@ -50,6 +50,7 @@ function handleSearchSubmit(event,jsonReturnData) {
 }
 // 显示搜索结果的函数
 function displaySearchResults(jsonReturnData) {
+
     searchContent.innerHTML = '';
     var table = document.createElement('table');
     table.className = 'search-results-table'; 
@@ -69,6 +70,7 @@ function displaySearchResults(jsonReturnData) {
     for(i=0;i<dataLength;i++){
         var row = document.createElement('tr');
         // 封面与音乐标题列
+
         // var coverImg = document.createElement('img');
         // if(i<dataLength){
         //     coverImg.src = jsonReturnData[i].cover; // 假设result对象中有cover属性
@@ -77,6 +79,7 @@ function displaySearchResults(jsonReturnData) {
         //     titleCell.appendChild(coverImg);
         // }
         var titleCell = document.createElement('td');
+
         var titleSpan = document.createElement('span');
         titleSpan.textContent = jsonReturnData[i].song_name;
         titleCell.appendChild(titleSpan);
@@ -181,17 +184,20 @@ function displaySearchResults(jsonReturnData) {
     }
     // 将表体添加到表格
     table.appendChild(tbody);
+
     const div=document.createElement('div');
     div.style.height="100px";
     // 将表格添加到搜索结果内容
     searchContent.appendChild(table);
     searchContent.appendChild(div);
+
     // 显示搜索结果容器，隐藏其他内容
     searchResults.style.display = 'block';
     document.querySelector('.recommendations').style.display = 'none';
 }
 // 返回到主内容的函数
 function backToMainContent() {
+
     const searchResults = document.getElementById('searchResults');
     // const recommendations = document.querySelector('.recommendations');
     // 隐藏搜索结果容器，显示原始内容
@@ -205,3 +211,4 @@ function formatTime(seconds) {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
+

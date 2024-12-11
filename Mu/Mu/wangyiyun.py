@@ -64,6 +64,7 @@ class wangyiyun:
             "encSecKey": encSecKey
         }
         re = requests.post(url=url, params=params, verify=False, timeout=3, cookies={
+
             "MUSIC_U": "004C43CC0216A157A4C4761D4F800B05167C0E68636059D849AD751366"
                        "2107EED95CE09CD95BA65880A693DFFD152EF0B677966BFC1FB0C9B453"
                        "A03970B1507D29FE96EEE171AAA7B1AA0BEFA606CA0F333D3D835F057F"
@@ -88,6 +89,7 @@ class wangyiyun:
                     f'"limit":"{limit}","csrf_token":"{csrf_token}"' + '}'
         return self.get_data(msg, url)
 
+
     def get_data_no_cookie(self, msg, url):
         encText, encSecKey = self.get_params(msg, self.e, self.f, self.g)  # 获取参数
         params = {
@@ -100,5 +102,6 @@ class wangyiyun:
     def getSongInfo(self, song_id, csrf_token=''):
         msg = '{' + f'"id":"{song_id}",' + r'"c":"[{\"id\":\"' + str(
             song_id) + r'\"}]",' + f'"csrf_token":"{csrf_token}"' + '}'
+
         url = f'https://music.163.com/weapi/v3/song/detail?csrf_token={csrf_token}'
         return self.get_data_no_cookie(msg, url)
