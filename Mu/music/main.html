@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/iconfont.css' %}">
+
 </head>
 <body>
 
@@ -23,6 +24,7 @@
                 <input type="file" id="avatarUpload" class="avatar-upload" accept="image/jpeg" style="display:none;" onchange="handleFiles(this.files)"><br><br>
             </form>
             {% csrf_token %}
+
             <form id="userInfoForm">
                 <!-- 昵称 -->
                 <label for="nickname">昵称:</label><br>
@@ -52,16 +54,19 @@
         <div id="searchResults" style="display:none;">
             <div onclick="backToMainContent()" style="cursor:pointer; margin-bottom: 20px;" id="back-return">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="40" viewBox="0 0 12 24"><path fill="#666666" fill-rule="evenodd" d="m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z"/></svg>
+
             </div>
             <div id="searchContent">
             </div>
         </div>
+
 
         <!-- 推荐歌曲、歌手、播放历史 -->
         <div class="recommendations">
             <h2>推荐歌曲</h2>
              <ul class="item-container" id="recommendSong">
                 <!-- <li class="item">
+
                     <img src="https://via.placeholder.com/150" alt="歌曲1" onclick="console.log('a')">
                     <p>歌曲1</p>
                 </li>
@@ -172,6 +177,7 @@
     <div class="music-bar">
         <div class="lyrics" id="lyrics">
             <span></span>
+
         </div>
         <div class="playback-controls">
             <div class="play-control">

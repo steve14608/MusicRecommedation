@@ -6,7 +6,9 @@ from . import database
 import time
 import os
 from . import song
+
 from Mus.model_manager import model_manager
+
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
 def page(request):
@@ -71,6 +73,7 @@ def updateInfo(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
     val = {'user_id': request.COOKIES.get('user_id'),'user_nickname':json_data['user_nickname'], 'user_bio': json_data['user_bio']}
+
     database.update('user', val)
     return HttpResponse(status=200)
 
@@ -95,10 +98,12 @@ def updateHistory(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
     val = {'user_id': request.COOKIES.get('user_id'), 'song_id': json_data['song_id'], 'last_time': time.time()}
+
     if database.query(request_name='user_history_exist',val = val):
         database.update(request_name='history', val=val)
     else:
         database.insert(request_name='history',val=val)
+
     return HttpResponse(status=200)
 
 
@@ -107,13 +112,16 @@ def getHistory(request):
     ids = database.query(request_name='user_history', val=val)[:8]
     data = [
     song.getSongById(sid.song_id) for sid in ids
+
     ]
     return JsonResponse({'items': data})
 
 
 # 获取音乐推荐
 def get_recommendations(request):
+
     MUSIC_MODEL = model_manager.MUSIC_MODEL
+
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
@@ -126,12 +134,14 @@ def get_recommendations(request):
     recommendations = []
     for song_id in user_songs:
         if song_id in MUSIC_MODEL:
+
             recommendations.extend(MUSIC_MODEL[song_id])
     sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
     top_recommendations = [song_id for song_id, _ in sorted_recommendations[:8]]
     if len(top_recommendations) > 0:
         data_list = [
             song.getSongById(i) for i in top_recommendations
+
         ]
         return JsonResponse({"recommendations": data_list}, status=200)
     return HttpResponse('暂无数据', status=404)
@@ -139,6 +149,7 @@ def get_recommendations(request):
 
 # 获取歌手推荐
 def get_recommend_singer(request):
+
     SINGER_MODEL = model_manager.SINGER_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
@@ -171,4 +182,5 @@ def get_recommend_singer(request):
         ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)
+
 

@@ -54,6 +54,7 @@
             loginForm.classList.remove('active');
         });
         loginForm.addEventListener('submit',function(event){
+
             event.preventDefault();
 
             const form = event.target; // 当前表单
@@ -76,7 +77,7 @@
                     alert("账号或密码错误")
                 }
             };
-            
+
         })
 
         registerForm.addEventListener('submit',function(event){
@@ -113,7 +114,7 @@
                     alert("该账号已被注册！")
                 }
             };
-            
+
         })
     </script>
 

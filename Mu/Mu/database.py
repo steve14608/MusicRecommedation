@@ -22,6 +22,9 @@ def query(request_name, val):
     elif request_name == 'user_history':
         # return models.History.objects.raw(f'select songid from history where user_id = {val} order by last_time desc')
         return models.History.objects.filter(user_id=val['user_id']).order_by('-last_time')
+    elif request_name == 'user_history_exist':
+        return len(models.History.objects.filter(user_id=val['user_id'], song_id=val['song_id'])) > 0
+
     # 根据song_id获取歌曲的详细信息
     elif request_name == 'song_info':
         return models.SongInfo.objects.filter(song_id=val['song_id'])
@@ -29,6 +32,7 @@ def query(request_name, val):
         # return models.SongInfo.objects.raw(f'select singerid from rawdata5 where songid = {val}')
         cursor = connection.cursor()
         cursor.execute('select song_singer_id from mus_songinfo where song_id = %s', [val['song_id']])
+
         return cursor.fetchall()
     # 返回头图
     elif request_name == 'avatar':
@@ -44,6 +48,7 @@ def query(request_name, val):
         return cursor.fetchall()
     elif request_name == 'user_id':
         return models.User.objects.filter(user_id=val['user_id'])
+
     elif request_name=='song_singer_id':
         return models.SongInfo.objects.filter(song_singer_id=val['song_singer_id'])
     elif request_name == 'user_history_exist':
@@ -52,11 +57,13 @@ def query(request_name, val):
         cursor = connection.cursor()
         cursor.execute('select song_id from (select song_id,count(song_id) cou from mus_songinfo'
                    ' group by song_id order by cou desc limit 10) t')
+
         return cursor.fetchall()
     elif request_name == 'most_listened_singer':
         cursor = connection.cursor()
         cursor.execute('select song_singer_id from (select song_singer_id,count(song_singer_id) cou'
                         ' from mus_song_info group by song_singer_id order by cou desc limit 10)')
+
         return cursor.fetchall()
 
 
