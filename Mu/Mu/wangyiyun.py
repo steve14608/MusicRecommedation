@@ -64,33 +64,21 @@ class wangyiyun:
             "encSecKey": encSecKey
         }
         re = requests.post(url=url, params=params, verify=False, timeout=3, cookies={
-            "MUSIC_U": "002C7AFD15620BB32A50081399F98901B5EC68CF3B501"
-                       "34AFBA44F8593B322C1C8723A92958A8E44BD996B17BE7"
-                       "E15AF1905C0D90763495E5314C8C011D01035AA7526E3F"
-                       "40ACBD4D1C799CA17D5507F0C95D32E99E955DCF02AFD4C"
-                       "8D3CE6778CD5E9A50E3D1410D5423FC7AE7BE1043E62FEE"
-                       "88582C700EEE152BC368F1374AD82FDC6E7140A6DC7DE15"
-                       "9F81CCF7500F272F122ADA4B3D39DBE59A5381FB83CDADC"
-                       "8002DA63806C61A395E51FAA1F6318FCED59125995ECBA95"
-                       "4B9855E08CD29885632314618E32579223362C9FAB1B1137"
-                       "6CED50FF4D4E1142E11E7E8ACEFF580674C078ACE106D0E2"
-                       "A217284FF335B6FFDCEBC64F3FC1472BF5343DFD59B6B9C82"
-                       "81415E2DB49EC5A4DC332BFAFD1E2D12EA0A8A3FDB1046E5A"
-                       "7EC112C4ED852417E892ACFFEC1184B61B83C6C73626D19982"
-                       "53858DBE9D345B48719AE9D987938C2122D472EB9C9B3E27E"
-                       "4DAC41994965C752DC19CB8CF7CFCEF66295F155AC592AB852"
-                       "FC518914A7ECBB0D368562"})
 
+            "MUSIC_U": "004C43CC0216A157A4C4761D4F800B05167C0E68636059D849AD751366"
+                       "2107EED95CE09CD95BA65880A693DFFD152EF0B677966BFC1FB0C9B453"
+                       "A03970B1507D29FE96EEE171AAA7B1AA0BEFA606CA0F333D3D835F057F"
+                       "0088474DAF0C40D68D996AB5CDFAB0A26B47C832DF5A21BF197598D0D5"
+                       "D23AFC60C69AD617FB52CA907C57CF1BAFBA333B013DEBE571ABF04D6A"
+                       "6E8503E3C9C6283430E1C8CC07DDA23D7D3AC7D69A15ACA350584F982A"
+                       "0804DCB69B9C224F3ADCF5F59BDD06A8260C31AC7ED575F15DFC279E6C"
+                       "79A5FE50C850AA2477F8A87D1A6584F4317BA1935EFD56CEBD50FB9E1C"
+                       "057D9208AD490EFDA9501E72A0122A06D94965EACB72A542FCA64855ED"
+                       "1D70580891CBBF39A64351EC43402B1A472A84B30CB321DF8961678044"
+                       "DE08CC42832E9F0628F3E6AE3B159BE29DEBACC6FB42E5D25C8866AE1B"
+                       "487472081235C3111DE0913D93C470353A8974E2D3565B97E051E3D450"
+                       "CAE9426ACBC3AAD8A21DC6A1A7927B58DFC7BB6F56"})
         return re.json()  # 返回结果
-
-    def get_data_no_cookie(self, msg, url):
-        encText, encSecKey = self.get_params(msg, self.e, self.f, self.g)  # 获取参数
-        params = {
-            "params": encText,
-            "encSecKey": encSecKey
-        }
-        re = requests.post(url=url, params=params, verify=False, timeout=3)
-        return re.json()
 
     # 返回搜索数据
     def get_search(self, hlpretag='<span class=\\"s-fc7\\">', hlposttag='</span>', s='', type='1', queryCorrect='false',
@@ -101,8 +89,19 @@ class wangyiyun:
                     f'"limit":"{limit}","csrf_token":"{csrf_token}"' + '}'
         return self.get_data(msg, url)
 
+
+    def get_data_no_cookie(self, msg, url):
+        encText, encSecKey = self.get_params(msg, self.e, self.f, self.g)  # 获取参数
+        params = {
+            "params": encText,
+            "encSecKey": encSecKey
+        }
+        re = requests.post(url=url, params=params, verify=False, timeout=3)
+        return re.json()
+
     def getSongInfo(self, song_id, csrf_token=''):
         msg = '{' + f'"id":"{song_id}",' + r'"c":"[{\"id\":\"' + str(
-            id) + r'\"}]",' + f'"csrf_token":"{csrf_token}"' + '}'
+            song_id) + r'\"}]",' + f'"csrf_token":"{csrf_token}"' + '}'
+
         url = f'https://music.163.com/weapi/v3/song/detail?csrf_token={csrf_token}'
         return self.get_data_no_cookie(msg, url)

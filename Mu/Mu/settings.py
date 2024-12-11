@@ -74,6 +74,7 @@ WSGI_APPLICATION = 'Mu.wsgi.application'
 
 DATABASES = {
     'default':
+
         {
             'ENGINE': 'django.db.backends.mysql',  # 数据库引擎
             'NAME': 'data',  # 数据库名称
