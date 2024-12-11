@@ -7,8 +7,6 @@ import time
 import os
 from . import song
 
-from Mus.model_manager import model_manager
-
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
 def page(request):
@@ -64,6 +62,7 @@ def signup(request):
 # 更新头图
 def updateAvatar(request):
     val = {'user_id': request.COOKIES.get('user_id'), 'avatar': request.FILES.get('avatar')}
+
     database.update(request_name='avatar', val=val)
     return HttpResponse(status=200)
 
@@ -72,7 +71,8 @@ def updateAvatar(request):
 def updateInfo(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-    val = {'user_id': request.COOKIES.get('user_id'),'user_nickname':json_data['user_nickname'], 'user_bio': json_data['user_bio']}
+    val = {'user_id': request.COOKIES.get('user_id'), 'user_nickname': json_data['user_nickname'],
+           'user_bio': json_data['user_bio']}
 
     database.update('user', val)
     return HttpResponse(status=200)
@@ -98,12 +98,10 @@ def updateHistory(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
     val = {'user_id': request.COOKIES.get('user_id'), 'song_id': json_data['song_id'], 'last_time': time.time()}
-
-    if database.query(request_name='user_history_exist',val = val):
+    if database.query(request_name='user_history_exist', val=val):
         database.update(request_name='history', val=val)
     else:
-        database.insert(request_name='history',val=val)
-
+        database.insert(request_name='history', val=val)
     return HttpResponse(status=200)
 
 
@@ -111,17 +109,17 @@ def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
     ids = database.query(request_name='user_history', val=val)[:8]
     data = [
-    song.getSongById(sid.song_id) for sid in ids
-
+        {
+            'songid': sid.songid,
+            'basicInfo': song.getSongById(sid.songid)
+        } for sid in ids
     ]
     return JsonResponse({'items': data})
 
 
 # 获取音乐推荐
 def get_recommendations(request):
-
-    MUSIC_MODEL = model_manager.MUSIC_MODEL
-
+    global MUSIC_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
@@ -134,14 +132,10 @@ def get_recommendations(request):
     recommendations = []
     for song_id in user_songs:
         if song_id in MUSIC_MODEL:
-
-            recommendations.extend(MUSIC_MODEL[song_id])
-    sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
-    top_recommendations = [song_id for song_id, _ in sorted_recommendations[:8]]
-    if len(top_recommendations) > 0:
+            recommendations.extend(sorted(MUSIC_MODEL[song_id].items(), key=lambda x: -x[1])[:8])
+    if len(recommendations) > 0:
         data_list = [
-            song.getSongById(i) for i in top_recommendations
-
+            song.getSongById(i) for i in recommendations
         ]
         return JsonResponse({"recommendations": data_list}, status=200)
     return HttpResponse('暂无数据', status=404)
@@ -149,8 +143,7 @@ def get_recommendations(request):
 
 # 获取歌手推荐
 def get_recommend_singer(request):
-
-    SINGER_MODEL = model_manager.SINGER_MODEL
+    global SINGER_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
@@ -170,17 +163,12 @@ def get_recommend_singer(request):
     recommendations = []
     for singer_id in singer_ids:
         if singer_id in SINGER_MODEL:
-            recommendations.extend(SINGER_MODEL[singer_id])
-
-    sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
-    top_recommendations = [singer_id for singer_id, _ in sorted_recommendations[:8]]
-    if len(top_recommendations) > 0:
+            recommendations.extend(sorted(SINGER_MODEL[singer_id].items(), key=lambda x: -x[1])[:8])
+    if len(recommendations) > 0:
         # return JsonResponse({"recommendations": recommendations}, status=200)
         data = [
             {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
-            top_recommendations
+            recommendations
         ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)
-
-

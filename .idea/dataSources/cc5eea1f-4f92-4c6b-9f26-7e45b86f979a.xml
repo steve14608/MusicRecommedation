@@ -1056,11 +1056,11 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="313" parent="292" name="rawdata(user-singerid)">
+    <table id="313" parent="292" name="rawdata2backup">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="314" parent="292" name="rawdata2backup">
+    <table id="314" parent="292" name="rawdata_user_singerid">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
@@ -1143,7 +1143,7 @@ permission_id</ColNames>
       <UnderlyingIndexName>auth_group_permissions_group_id_permission_id_0cd325b0_uniq</UnderlyingIndexName>
     </key>
     <column id="331" parent="299" name="id">
-      <AutoIncrement>45</AutoIncrement>
+      <AutoIncrement>44</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1430,7 +1430,7 @@ permission_id</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="390" parent="304" name="id">
-      <AutoIncrement>12</AutoIncrement>
+      <AutoIncrement>11</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1545,7 +1545,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="413" parent="308" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>2</AutoIncrement>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1571,7 +1571,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="418" parent="309" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>23</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1600,7 +1600,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="424" parent="310" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>466240</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1635,7 +1635,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="431" parent="311" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>6</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1698,35 +1698,35 @@ model</ColNames>
       <DasType>varchar(32)|0s</DasType>
       <Position>5</Position>
     </column>
-    <column id="445" parent="313" name="uid">
-      <DasType>int|0s</DasType>
-      <Position>1</Position>
-    </column>
-    <column id="446" parent="313" name="singerid">
-      <DasType>int|0s</DasType>
-      <Position>2</Position>
-    </column>
-    <column id="447" parent="314" name="no">
+    <column id="445" parent="313" name="no">
       <DasType>int|0s</DasType>
       <DefaultExpression>0</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="448" parent="314" name="uid">
+    <column id="446" parent="313" name="uid">
       <DasType>int|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="449" parent="314" name="songname">
+    <column id="447" parent="313" name="songname">
       <DasType>varchar(64)|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="450" parent="314" name="songid">
+    <column id="448" parent="313" name="songid">
       <DasType>int|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="451" parent="314" name="singer">
+    <column id="449" parent="313" name="singer">
       <DasType>varchar(32)|0s</DasType>
       <Position>5</Position>
+    </column>
+    <column id="450" parent="314" name="uid">
+      <DasType>int|0s</DasType>
+      <Position>1</Position>
+    </column>
+    <column id="451" parent="314" name="singerid">
+      <DasType>int|0s</DasType>
+      <Position>2</Position>
     </column>
   </database-model>
 </dataSource>

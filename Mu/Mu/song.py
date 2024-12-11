@@ -28,7 +28,6 @@ def searchSong(request):
     return JsonResponse({'data': song_list}, status=200)
 
 
-
 # 根据song_id返回file
 def getSongUrl(request):
     raw_data = request.body.decode("utf-8")
@@ -58,12 +57,12 @@ def getSongCover(request):
 def getSongLyrics(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-    print(json_data)
+
     jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-    return JsonResponse({'lyric':lyricv1['lrc']['lyric']})
+    return HttpResponse(lyricv1['lrc']['lyric'])
 
 
 # 返回歌曲封面、作者、歌名
@@ -88,8 +87,7 @@ def getSongById(sid):
     namev1 = name_v1(urlv1['data'][0]['id'])
 
     return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
-            'cover': namev1['songs'][0]['al']['picUrl'],'song_id':sid}
-
+            'cover': namev1['songs'][0]['al']['picUrl']}
 
 
 def getSongBySingerId(request):
