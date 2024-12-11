@@ -28,7 +28,7 @@ def query(request_name, val):
     elif request_name == 'singer_id':
         # return models.SongInfo.objects.raw(f'select singerid from rawdata5 where songid = {val}')
         cursor = connection.cursor()
-        cursor.execute('select singer_id from rawedata5 where song_id = %s', [val['singer_id']])
+        cursor.execute('select song_singer_id from mus_songinfo where song_id = %s', [val['song_id']])
         return cursor.fetchall()
     # 返回头图
     elif request_name == 'avatar':
@@ -36,13 +36,28 @@ def query(request_name, val):
     elif request_name == 'song_name':
         # return models.SongInfo.objects.raw(f'select distinct songid from rawdata where songname like"{val}"; ')
         cursor = connection.cursor()
-        cursor.execute('select distinct song_id,song_name,song_singer,song_singer_id from mus_songinfo where song_name '
-                       'like %s ', [val['song_name']])
+        cursor.execute('select min(song_id) song_id,b.song_name,b.song_singer,b.song_singer_id from '
+                       '(select distinct song_name,song_singer,song_singer_id from mus_songinfo where'
+                       ' song_name like %s ) as b join mus_songinfo on mus_songinfo.song_name = b.song_name'
+                       ' and mus_songinfo.song_singer = b.song_singer group by song_name,song_singer,song_singer_id;'
+                       , [val['song_name']])
         return cursor.fetchall()
     elif request_name == 'user_id':
         return models.User.objects.filter(user_id=val['user_id'])
     elif request_name=='song_singer_id':
         return models.SongInfo.objects.filter(song_singer_id=val['song_singer_id'])
+    elif request_name == 'user_history_exist':
+        return len(models.History.objects.filter(user_id=val['user_id'], song_id=val['song_id'])) > 0
+    elif request_name == 'most_listened_song':
+        cursor = connection.cursor()
+        cursor.execute('select song_id from (select song_id,count(song_id) cou from mus_songinfo'
+                   ' group by song_id order by cou desc limit 10) t')
+        return cursor.fetchall()
+    elif request_name == 'most_listened_singer':
+        cursor = connection.cursor()
+        cursor.execute('select song_singer_id from (select song_singer_id,count(song_singer_id) cou'
+                        ' from mus_song_info group by song_singer_id order by cou desc limit 10)')
+        return cursor.fetchall()
 
 
 def update(request_name, val):

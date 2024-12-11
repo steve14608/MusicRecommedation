@@ -18,19 +18,15 @@ def searchSong(request):
     json_data = json.loads(raw_data)
     val = {"song_name": json_data['search']}
 
-    data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
-    if len(data_list) < 2:
-        data = wangyiyun().get_search(s=val['song_name'])
-        song_list = [
-            {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
-             'song_singer_id': i['ar'][0]['id']} for i in data['result']['songs'][:10]
-        ]
-    else:
-        data_list = data_list[:10]
-        song_list = [
-            {'song_id': i[0], 'song_name': i[1], 'song_singer': i[2], 'song_singer_id': i[3]} for i in data_list
-        ]
+    # data_list = database.query('song_name', val)  # 列表，每个列表都是一个元组
+    data = wangyiyun().get_search(s=val['song_name'])
+    song_list = [
+        {'song_id': i['id'], 'song_name': i['name'], 'song_singer': i['ar'][0]['name'],
+         'song_singer_id': i['ar'][0]['id'], 'song_album': i['al']['name'], 'song_duration': i['dt']}
+        for i in data['result']['songs'][:10]
+    ]
     return JsonResponse({'data': song_list}, status=200)
+
 
 
 # 根据song_id返回file
@@ -62,12 +58,12 @@ def getSongCover(request):
 def getSongLyrics(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
-
+    print(json_data)
     jsondata = str(json_data['song_id'])
     cookies = parse_cookie(read_cookie())
     urlv1 = url_v1(ids(jsondata), 'standard', cookies)
     lyricv1 = lyric_v1(urlv1['data'][0]['id'], cookies)
-    return HttpResponse(lyricv1['lrc']['lyric'])
+    return JsonResponse({'lyric':lyricv1['lrc']['lyric']})
 
 
 # 返回歌曲封面、作者、歌名
@@ -92,7 +88,7 @@ def getSongById(sid):
     namev1 = name_v1(urlv1['data'][0]['id'])
 
     return {'song_name': namev1['songs'][0]['name'], 'singer': namev1['songs'][0]['ar'][0]['name'],
-            'cover': namev1['songs'][0]['al']['picUrl']}
+            'cover': namev1['songs'][0]['al']['picUrl'],'song_id':sid}
 
 
 def getSongBySingerId(request):

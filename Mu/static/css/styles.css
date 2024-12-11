@@ -104,6 +104,11 @@ button:hover {
     margin-bottom: 50px;
 }
 
+.padding{
+    height: 100px;
+    width: 100px;
+}
+
 h2 {
     font-size: 30px;
     margin-bottom: 20px;
@@ -125,37 +130,75 @@ h2 {
     border-radius: 8px;
     margin-bottom: 10px;
 }
+/*歌词*/
 .music-bar {
-    position: fixed;  /* 固定位置 */
-    bottom: 0;        /* 靠底部 */
-    left: 0;          /* 靠左 */
-    width: 100%;      /* 宽度占满全屏 */
-    background-color: #333; /* 背景色 */
-    color: white;     /* 文字颜色 */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
     padding: 10px 20px;
     display: flex;
-    flex-direction: column; /* 垂直排列 */
-    align-items: center;    /* 水平居中 */
+    flex-direction: column; /* 改为垂直排列 */
+    align-items: center;
+    justify-content: center;
 }
 
 .lyrics {
-    text-align: center; /* 歌词居中 */
-    margin-bottom: 10px; /* 上方间距 */
-    font-size: 16px;    /* 适当字体大小 */
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    width: 100%;
 }
 
 .playback-controls {
     display: flex;
-    justify-content: center; /* 控制按钮居中 */
     align-items: center;
-    width: 100%;  /* 确保容器的宽度为100% */
-    padding: 0 20px;  /* 添加左右内边距，使内容不紧贴屏幕边缘 */
+    width: 100%;
+    padding: 0 20px;
+}
+
+.song-info {
+    display: flex;
+    align-items: center;
+    margin-right: 20px; /* 给歌手信息留点空隙 */
+}
+
+.cover {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px; /* 歌曲封面与歌名歌手之间的间距 */
+}
+
+.cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px; /* 圆角封面 */
+}
+
+.song-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+
+.song-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.song-artist {
+    font-size: 14px;
+    color: #bbb;
 }
 
 .play-control {
     display: flex;
     align-items: center;
-    margin-right: 10px;  /* 按钮和进度条之间的间距 */
+    margin-right: 10px;
 }
 
 .playback-controls .play-control button {
@@ -163,21 +206,21 @@ h2 {
     border: none;
     color: white;
     font-size: 20px;
-    margin: 0 10px; /* 按钮之间的间距 */
+    margin: 0 10px;
     cursor: pointer;
 }
 
 .progress-bar {
     display: flex;
     align-items: center;
-    justify-content: center; /* 进度条居中 */
-    flex-grow: 1;           /* 允许进度条占据剩余空间 */
-    width: 33%;             /* 设置进度条宽度为屏幕的1/3 */
-    margin: 0 10px;         /* 使进度条与按钮之间有一些间距 */
+    justify-content: center;
+    flex-grow: 1;
+    width: 80%; /* 增加进度条的宽度 */
+    margin: 10px 0; /* 上下的间距调整 */
 }
 
 .progress-bar input {
-    width: 100%; /* 让进度条填满容器的宽度 */
+    width: 100%;
     margin-right: 10px;
 }
 
@@ -185,24 +228,25 @@ h2 {
     font-size: 14px;
 }
 
+
+
 /* 返回图标的包裹样式 */
 #searchResults div[onclick] {
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: 50px; 
-    height: 50px; 
-    background-color: #e0e0e0; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    margin-bottom: 20px; 
-    transition: background-color 0.3s; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
 }
 
 #searchResults div[onclick]:hover {
-    background-color: #cccccc; 
+    background-color: #cccccc;
 }
-
 
 .search-results-table {
     width: 100%;
@@ -212,37 +256,23 @@ h2 {
 
 .search-results-table th,
 .search-results-table td {
-    border: none; 
+    border: none;
     padding: 8px;
     text-align: left;
 }
 
 .search-results-table th {
     background-color: #f2f2f2;
-    color: #666; 
+    color: #666;
 }
 
 .search-results-table img {
-    vertical-align: middle; 
+    vertical-align: middle;
 }
 
 .search-results-table button {
     cursor: pointer;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .item-container {
     display: flex;

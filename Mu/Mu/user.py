@@ -6,7 +6,7 @@ from . import database
 import time
 import os
 from . import song
-
+from Mus.model_manager import model_manager
 
 # 初始界面.判断有没有cookie来确定是去登录界面还是主页面
 def page(request):
@@ -95,7 +95,10 @@ def updateHistory(request):
     raw_data = request.body.decode("utf-8")
     json_data = json.loads(raw_data)
     val = {'user_id': request.COOKIES.get('user_id'), 'song_id': json_data['song_id'], 'last_time': time.time()}
-    database.update(request_name='history', val=val)
+    if database.query(request_name='user_history_exist',val = val):
+        database.update(request_name='history', val=val)
+    else:
+        database.insert(request_name='history',val=val)
     return HttpResponse(status=200)
 
 
@@ -103,28 +106,32 @@ def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
     ids = database.query(request_name='user_history', val=val)[:8]
     data = [
-        {
-            'songid': sid.songid,
-            'basicInfo': song.getSongById(sid.songid)
-        } for sid in ids
+    song.getSongById(sid.song_id) for sid in ids
     ]
     return JsonResponse({'items': data})
 
 
 # 获取音乐推荐
 def get_recommendations(request):
-    global MUSIC_MODEL
+    MUSIC_MODEL = model_manager.MUSIC_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs):
+        data_list = [
+            song.getSongById(i['song_id']) for i in database.query(request_name='most_listened_song',val=None)
+        ]
+        return JsonResponse({"recommendations": data_list}, status=200)
 
     recommendations = []
     for song_id in user_songs:
         if song_id in MUSIC_MODEL:
-            recommendations.extend(sorted(MUSIC_MODEL[song_id].items(), key=lambda x: -x[1])[:8])
-    if len(recommendations) > 0:
+            recommendations.extend(MUSIC_MODEL[song_id])
+    sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
+    top_recommendations = [song_id for song_id, _ in sorted_recommendations[:8]]
+    if len(top_recommendations) > 0:
         data_list = [
-            song.getSongById(i) for i in recommendations
+            song.getSongById(i) for i in top_recommendations
         ]
         return JsonResponse({"recommendations": data_list}, status=200)
     return HttpResponse('暂无数据', status=404)
@@ -132,10 +139,17 @@ def get_recommendations(request):
 
 # 获取歌手推荐
 def get_recommend_singer(request):
-    global SINGER_MODEL
+    SINGER_MODEL = model_manager.SINGER_MODEL
     val = {'user_id': request.COOKIES.get('user_id')}
 
     user_songs = [hi.songid for hi in database.query(request_name='user_history', val=val)]
+    if len(user_songs) == 0:
+        data = [
+            {'singer_id': i['song_singer_id'], 'singer_pic': song.getSingerHeadPic(i['song_singer_id'])} for i in
+            database.query(request_name='most_listened_singer', val=None)
+        ]
+        return JsonResponse({'data': data}, status=200)
+
     singer_ids = []
     for songid in user_songs:
         queryda = database.query(request_name='singer_id', val={'song_id': songid})
@@ -145,12 +159,15 @@ def get_recommend_singer(request):
     recommendations = []
     for singer_id in singer_ids:
         if singer_id in SINGER_MODEL:
-            recommendations.extend(sorted(SINGER_MODEL[singer_id].items(), key=lambda x: -x[1])[:8])
-    if len(recommendations) > 0:
+            recommendations.extend(SINGER_MODEL[singer_id])
+
+    sorted_recommendations = sorted(recommendations, key=lambda x: -x[1])
+    top_recommendations = [singer_id for singer_id, _ in sorted_recommendations[:8]]
+    if len(top_recommendations) > 0:
         # return JsonResponse({"recommendations": recommendations}, status=200)
         data = [
             {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
-            recommendations
+            top_recommendations
         ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)

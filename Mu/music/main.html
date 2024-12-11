@@ -8,6 +8,7 @@
     <base href="/">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/iconfont.css' %}">
 </head>
 <body>
@@ -34,8 +35,7 @@
                 <!-- 保存按钮 -->
                 <button type="submit">更新信息</button>
             </form>
-
-        
+            <button type="submit" onclick=>退出登录</button>
         </div>
     </div>
 
@@ -50,8 +50,8 @@
             </form>
         </div>
         <div id="searchResults" style="display:none;">
-            <div onclick="backToMainContent()" style="cursor:pointer; margin-bottom: 20px;">
-                <i class="iconfont icon-fanhui"></i>
+            <div onclick="backToMainContent()" style="cursor:pointer; margin-bottom: 20px;" id="back-return">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="40" viewBox="0 0 12 24"><path fill="#666666" fill-rule="evenodd" d="m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z"/></svg>
             </div>
             <div id="searchContent">
             </div>
@@ -60,8 +60,8 @@
         <!-- 推荐歌曲、歌手、播放历史 -->
         <div class="recommendations">
             <h2>推荐歌曲</h2>
-             <ul class="item-container" id="item-container">
-                <li class="item">
+             <ul class="item-container" id="recommendSong">
+                <!-- <li class="item">
                     <img src="https://via.placeholder.com/150" alt="歌曲1" onclick="console.log('a')">
                     <p>歌曲1</p>
                 </li>
@@ -100,15 +100,15 @@
                 <li class="item">
                     <img src="https://via.placeholder.com/150" alt="歌曲3" onclick="console.log('a')">
                     <p>歌曲6</p>
-                </li>
+                </li> -->
             </ul>
 
             <h2>推荐歌手</h2>
-            <ul class="item-container">
-                <li class="item">
+            <ul class="item-container" id="recommendSinger">
+                <!-- <li class="item">
                     <img src="https://via.placeholder.com/150" alt="歌手1">
                     <p>歌手1</p>
-                </li>li
+                </li>
                 <li class="item">
                     <img src="https://via.placeholder.com/150" alt="歌手2">
                     <p>歌手2</p>
@@ -128,12 +128,12 @@
                 <li class="item">
                     <img src="https://via.placeholder.com/150" alt="歌手3">
                     <p>歌手6</p>
-                </li>
+                </li> -->
             </ul>
 
             <h2>播放历史</h2>
-            <div class="item-container">
-                <div class="item">
+            <ul class="item-container" id="songHistory">
+                <!-- <div class="item">
                     <img src="https://via.placeholder.com/150" alt="历史歌曲1" onclick="console.log('播放')">
                     <p>历史歌曲1</p>
                 </div>
@@ -156,11 +156,12 @@
                 <div class="item">
                     <img src="https://via.placeholder.com/150" alt="历史歌曲3" onclick="console.log('播放')">
                     <p>历史歌曲6</p>
-                </div>
-            </div>
+                </div> -->
+            </ul>
         </div>
     </div>
 
+    <div class="padding"></div>
     <audio id="audio">
         <source src="music.wav" type="audio/wav"><!--放入音频，以这个举例-->
       </audio>
@@ -169,26 +170,38 @@
 
     <!-- 音乐播放栏 -->
     <div class="music-bar">
-        <div id="lyrics">
-            <span>这里是歌词文本</span>
+        <div class="lyrics" id="lyrics">
+            <span></span>
         </div>
-        <div class="play-control">
-            <button class="prev"><i class="fas fa-step-backward"></i></button>
-            <button class="play-pause"><i class="fas fa-play"></i></button>
-            <button class="next"><i class="fas fa-step-forward"></i></button>
-        </div>
-        <div class="progress-bar">
-            <input type="range" class="progress" value="0" max="100" step="1">
-            <span class="current-time">00:00</span> / <span class="duration">03:30</span>
+        <div class="playback-controls">
+            <div class="play-control">
+                <button class="prev"><i class="fas fa-step-backward"></i></button>
+                <button class="play-pause"><i class="fas fa-play"></i></button>
+                <button class="next"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <div class="song-info">
+                <div class="cover">
+                    <img src="your-cover-image.jpg" alt="Song Cover" id="cover">
+                </div>
+                <div class="song-details">
+                    <span class="song-title" id="song-title">歌曲名称</span>
+                    <span class="song-artist" id="song-artist">歌手名称</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <input type="range" class="progress" value="0" max="100" step="1">
+                <span class="current-time">00:00</span> / <span class="duration">00:00</span>
+            </div>
         </div>
     </div>
     <script src="../static/js/cookie.js"></script>
-    <script src="../static/js/display.js"></script>
     <script src="../static/js/search.js"></script>
+    <script src="../static/js/play.js"></script>
     <script src="../static/js/saveInfo.js"></script>
     <script src="../static/js/recSong.js"></script>
     <script src="../static/js/saveAvatar.js"></script>
-    <script src="../static/js/iconfont.js"></script>
+    <script src="../static/js/history.js"></script>
+    <script src="../static/js/recSinger.js"></script>
 
 
 </body>

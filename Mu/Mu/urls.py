@@ -34,9 +34,8 @@ urlpatterns = [
     path('getSongUrl', song.getSongUrl),
     path('getSongCover', song.getSongCover),
     path('getSongLyrics', song.getSongLyrics),
-    path('getSongLyrics', song.getSongLyrics),
     path('getSong', song.getSong),
-    path('getRecommend', user.get_recommendations),
+    path('getRecommendation', user.get_recommendations),
     path('getRecommendSinger', user.get_recommend_singer),
     path('getSongBySingerId', song.getSongBySingerId),
     path('searchSong',song.searchSong)
