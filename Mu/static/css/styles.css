@@ -21,7 +21,7 @@ body {
     left: 0;
     padding: 20px;
     color: black;
-    background-image: url('./images/l-bg.png');
+    background-image: url('../images/l-bg.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

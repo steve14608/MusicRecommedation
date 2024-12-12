@@ -94,7 +94,7 @@ def getUserDetail(request):
 # 获取头图
 def getUserAvatar(request):
     val = {"avatar_index": request.COOKIES.get('user_id')}
-    return HttpResponse(database.query(request_name='avatar', val=val), status=200)
+    return HttpResponse(content=database.query(request_name='avatar', val=val), status=200)
 
 
 # 更新历史
