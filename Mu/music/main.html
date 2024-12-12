@@ -19,7 +19,7 @@
             {% csrf_token %}
             <form id="avatarForm">
                 <!-- 用户头像 -->
-                <img id="avatar" src="/getUserAvatar" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
+                <img id="avatar" src="" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
                 <input type="file" id="avatarUpload" class="avatar-upload" accept="image/jpeg" style="display:none;" onchange="handleFiles(this.files)"><br><br>
             </form>
             {% csrf_token %}
