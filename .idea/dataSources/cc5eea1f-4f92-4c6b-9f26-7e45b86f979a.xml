@@ -1545,7 +1545,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="413" parent="308" name="id">
-      <AutoIncrement>2</AutoIncrement>
+      <AutoIncrement>1</AutoIncrement>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1571,7 +1571,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="418" parent="309" name="id">
-      <AutoIncrement>23</AutoIncrement>
+      <AutoIncrement>22</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1581,7 +1581,7 @@ model</ColNames>
       <Position>2</Position>
     </column>
     <column id="420" parent="309" name="song_id">
-      <DasType>int|0s</DasType>
+      <DasType>bigint|0s</DasType>
       <Position>3</Position>
     </column>
     <column id="421" parent="309" name="last_time">
@@ -1600,7 +1600,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="424" parent="310" name="id">
-      <AutoIncrement>466240</AutoIncrement>
+      <AutoIncrement>466239</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1635,7 +1635,7 @@ model</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="431" parent="311" name="id">
-      <AutoIncrement>6</AutoIncrement>
+      <AutoIncrement>5</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>

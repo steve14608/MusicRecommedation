@@ -1,5 +1,7 @@
 let dataLength;
 let res;
+const searchResults = document.getElementById('searchResults');
+const searchContent = document.getElementById('searchContent');
 const searchForm=document.getElementById('search-form');
 searchForm.addEventListener('submit',function(event){
     event.preventDefault();
@@ -81,13 +83,14 @@ function displaySearchResults(jsonReturnData) {
         playButton.className='playSong';
         playButton.id=jsonReturnData[i].song_id;
         playButton.onclick=function(){
+            const jsData={
+                'song_id':this.id
+            };
+
             let xhr=new XMLHttpRequest;
             xhr.open('POST','/updateHistory',true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('X-CSRFToken',getCSRF());
-            const jsData={
-                'song_id':this.id
-            };
             xhr.send(JSON.stringify(jsData));
             xhr.onreadystatechange=function(){
                 if(xhr.readyState==4&&xhr.status==200){
@@ -98,10 +101,7 @@ function displaySearchResults(jsonReturnData) {
             xhr1.open('POST','/getSongLyrics',true);
             xhr1.setRequestHeader('Content-Type', 'application/json');
             xhr1.setRequestHeader('X-CSRFToken',getCSRF());
-            const jsData1={
-                'song_id':this.id
-            };
-            xhr1.send(JSON.stringify(jsData1));
+            xhr1.send(JSON.stringify(jsData));
             console.log("fuck1");
             xhr1.onreadystatechange=function(){
                 if(xhr1.readyState==4&&xhr1.status==200){
@@ -118,15 +118,12 @@ function displaySearchResults(jsonReturnData) {
             xhr2.open('POST','/getSongUrl',true);
             xhr2.setRequestHeader('Content-Type', 'application/json');
             xhr2.setRequestHeader('X-CSRFToken',getCSRF());
-            const jsData2={
-                'song_id':this.id
-            };
-            xhr2.send(JSON.stringify(jsData2));
+            xhr2.send(JSON.stringify(jsData));
             xhr2.onreadystatechange=function(){
                 if(xhr2.readyState==4&&xhr2.status==200){
                     audio.src=xhr2.responseText;
                     audio.play();
-                    displayButton.textContent='⏸';
+                    playPause.className = "fas fa-pause"
                     // console.log(xhr2.responseText);
                 }
             };
@@ -135,10 +132,7 @@ function displaySearchResults(jsonReturnData) {
             xhr3.open('POST','/getSong',true);
             xhr3.setRequestHeader('Content-Type', 'application/json');
             xhr3.setRequestHeader('X-CSRFToken',getCSRF());
-            const jsData3={
-                'song_id':this.id
-            };
-            xhr3.send(JSON.stringify(jsData3));
+            xhr3.send(JSON.stringify(jsData));
             xhr3.onreadystatechange=function(){
                 if(xhr3.readyState==4&&xhr3.status==200){
                     let Data=JSON.parse(xhr3.responseText);

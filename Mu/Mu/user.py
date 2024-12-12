@@ -56,7 +56,7 @@ def signup(request):
         user = {'user_account': val['user_account'], 'user_password': val['user_password'], 'user_id': ti,
                 'user_avatar': ti, 'user_bio': '无', 'user_nickname': '默认'}
         database.insert(request_name='user', val=user)
-        avatar = {'avatar_index': ti}
+        avatar = {'avatar_index': ti,'avatar':'avatars/avatar.jpg'}
         database.insert(request_name='avatar', val=avatar)
         rep = HttpResponse(content=ti, status=200)
         rep.set_cookie('user_id', ti)
@@ -94,7 +94,7 @@ def getUserDetail(request):
 # 获取头图
 def getUserAvatar(request):
     val = {"avatar_index": request.COOKIES.get('user_id')}
-    return HttpResponse(database.query(request_name='avatar', val=val), status=200)
+    return HttpResponse(content=database.query(request_name='avatar', val=val), status=200)
 
 
 # 更新历史
@@ -111,7 +111,7 @@ def updateHistory(request):
 
 def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
-    ids = database.query(request_name='user_history', val=val)[:8]
+    ids = database.query(request_name='user_history', val=val)[:10]
     data = [
         song.getSongById(sid.song_id) for sid in ids
     ]
@@ -155,10 +155,10 @@ def get_recommend_singer(request):
 
     user_songs = [hi.song_id for hi in database.query(request_name='user_history', val=val)]
     if len(user_songs) == 0:
-        data = [
-            {'singer_id': i[0], 'singer_pic': song.getSingerHeadPic(i[0])} for i in
-            database.query(request_name='most_listened_singer', val=None)
-        ]
+        data = []
+        for i in database.query(request_name='most_listened_singer', val=None):
+            temp = song.getSingerInfo(i[0])
+            data.append({'singer_id': i[0], 'singer_pic': temp[0], 'singer_name': temp[1]})
         return JsonResponse({'data': data}, status=200)
 
     singer_ids = []
@@ -178,14 +178,9 @@ def get_recommend_singer(request):
         int(i[0]) for i in recommendations
     ]
     if len(recommendations) > 0:
-        # return JsonResponse({"recommendations": recommendations}, status=200)
         data = []
         for i in recommendations:
             temp = song.getSingerInfo(i)
             data.append({'singer_id': i, 'singer_pic': temp[0], 'singer_name': temp[1]})
-        # data = [
-        #     {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
-        #     recommendations
-        # ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)

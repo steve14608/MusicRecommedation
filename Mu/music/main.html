@@ -19,7 +19,7 @@
             {% csrf_token %}
             <form id="avatarForm">
                 <!-- 用户头像 -->
-                <img id="avatar" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
+                <img id="avatar" src="" alt="用户头像" class="avatar" onclick="document.getElementById('avatarUpload').click();">
                 <input type="file" id="avatarUpload" class="avatar-upload" accept="image/jpeg" style="display:none;" onchange="handleFiles(this.files)"><br><br>
             </form>
             {% csrf_token %}
@@ -51,7 +51,10 @@
         </div>
         <div id="searchResults" style="display:none;">
             <div onclick="backToMainContent()" style="cursor:pointer; margin-bottom: 20px;" id="back-return">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="40" viewBox="0 0 12 24"><path fill="#666666" fill-rule="evenodd" d="m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="40" viewBox="0 0 12 24">
+                    <path fill="#666666" fill-rule="evenodd"
+                        d="m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z" />
+                </svg>
             </div>
             <div id="searchContent">
             </div>
@@ -59,20 +62,41 @@
 
         <!-- 推荐歌曲、歌手、播放历史 -->
         <div class="recommendations" id="recommendations">
-            <h2>推荐歌曲</h2>
-            <ul class="item-container" id="recommendSong"></ul>
+            <h2>
+                <span class="circle-logo"></span> 推荐歌曲
+            </h2>
 
-            <h2>推荐歌手</h2>
-            <ul class="item-container" id="recommendSinger"></ul>
+            <ul class="item-container-song" id="recommendSong">
+            </ul>
 
-            <h2>播放历史</h2>
-            <ul class="item-container" id="songHistory"></ul>
+            <div class="section-line">
+                <div class="line"></div>
+                <div class="arrow-icon">›</div>
+            </div>
+            <h2>
+            <span class="circle-logo"></span> 推荐歌手
+            </h2>
+            <ul class="item-container-singer" id="recommendSinger">
+            </ul>
+            <div class="section-line">
+                <div class="line"></div>
+                <div class="arrow-icon">›</div>
+            </div>
+            <h2>
+                <span class="circle-logo"></span> 播放历史
+            </h2>
+            <ul class="item-container-history" id="songHistory">
+            </ul>
+            <div class="section-line">
+                <div class="line"></div>
+                <div class="arrow-icon">›</div>
+            </div>
         </div>
     </div>
 
     <div class="padding"></div>
     <audio id="audio">
-        <source src="music.wav" type="audio/wav">
+        <source src="" type="audio/wav">
       </audio>
     
     <!-- 音乐播放栏 -->
@@ -83,12 +107,12 @@
         <div class="playback-controls">
             <div class="play-control">
                 <button class="prev"><i class="fas fa-step-backward"></i></button>
-                <button class="play-pause"><i class="fas fa-play"></i></button>
+                <button class="play-pause"><i class="fas fa-play" id="play-pause"></i></button>
                 <button class="next"><i class="fas fa-step-forward"></i></button>
             </div>
             <div class="song-info">
                 <div class="cover">
-                    <img src="your-cover-image.jpg" alt="Song Cover" id="cover">
+                    <img src="" alt="Song Cover" id="cover">
                 </div>
                 <div class="song-details">
                     <span class="song-title" id="song-title">歌曲名称</span>
@@ -103,6 +127,8 @@
     </div>
     <script src="../static/js/cookie.js"></script>
     <script src="../static/js/play.js"></script>
+    <script src="../static/js/mouseDrag.js"></script>
+    <script src="../static/js/processLyrics.js"></script>
     <script src="../static/js/search.js"></script>
     <script src="../static/js/saveInfo.js"></script>
     <script src="../static/js/recSong.js"></script>

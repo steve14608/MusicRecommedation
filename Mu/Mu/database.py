@@ -97,5 +97,5 @@ def insert(request_name, val):
         history = models.History(user_id=val['user_id'], song_id=val['song_id'], last_time=val['last_time'])
         history.save()
     elif request_name == 'avatar':
-        avatar = models.Avatar(user_id=val['avatar_index'])
+        avatar = models.Avatar(user_id=val['avatar_index'],avatar=val['avatar'])
         avatar.save()
