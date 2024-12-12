@@ -148,10 +148,15 @@ h2 .circle-logo {
     display: flex;
     gap: 20px;
     margin-bottom: 30px;
+    overflow-x: auto;
+}
+.item-container-song::-webkit-scrollbar,.item-container-singer::-webkit-scrollbar,.item-container-history::-webkit-scrollbar{
+    display: none;
 }
 
 .item-song, .item-singer, .item-history {
     text-align: center;
+    user-select: none;
 }
 
 .item-song img, .item-history img {
@@ -160,6 +165,10 @@ h2 .circle-logo {
     border-radius: 8px;
     margin-bottom: 10px;
     transition: all 0.3s ease;
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    -ms-user-drag: none;
+    user-select: none;
 }
 
 .item-singer img {
@@ -168,6 +177,10 @@ h2 .circle-logo {
     border-radius: 50%;
     object-fit: cover;
     transition: transform 0.3s;
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    -ms-user-drag: none;
+    user-select: none;
 }
 
 /* Hover effects */
@@ -175,6 +188,10 @@ h2 .circle-logo {
     opacity: 0.8;
     box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.3);
     transform: scale(1.05);
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    -ms-user-drag: none;
+    user-select: none;
 }
 
 
@@ -322,29 +339,8 @@ h2 .circle-logo {
     cursor: pointer;
 }
 
-.item-container {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-    overflow-x: auto;
-}
-.item-container::-webkit-scrollbar {
-    display: none; /* Chrome/Edge 隐藏滚动条 */
-}
-.item {
-    text-align: center;
-    user-select: none;
-}
 
-.item img {
-    width: 150px;
-    height: 150px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    -webkit-user-drag: none;
-    -moz-user-drag: none;
-    -ms-user-drag: none;
-}
+
 
 ul, li {
     list-style: none;

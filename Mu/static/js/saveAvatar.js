@@ -7,7 +7,7 @@ xhr.setRequestHeader('X-CSRFToken',getCSRF());
 xhr.send();
 xhr.onreadystatechange=function(){
                             if(xhr.readyState==4&&xhr.status==200){
-                                avatar.src = URL.createObjectURL(xhr.response)
+                                avatar.src = xhr.responseURL
                             }
                         };
 //console.log(xhr.response);
