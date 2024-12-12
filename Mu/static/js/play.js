@@ -20,7 +20,6 @@ let startX;
 let scrollLeft;
 audio.addEventListener('timeupdate',function(){
     let curTime=audio.currentTime;
-    console.log(curTime);
     render(curTime);
 })
 audio.addEventListener('timeupdate', ()=>{
@@ -69,8 +68,6 @@ function processLyric(lyric) {
 
 function locate(curtime, le, ri) {
     while (le < ri) {
-        console.log(le)
-        console.log(ri)
         let mid = parseInt((le + ri) / 2);
         if (lyricArray[mid].time == curtime) {
             cur = mid;
@@ -235,7 +232,6 @@ function dynamicAppendSinger(Data,container){
                 if(request.readyState==4 && request.status==200){
                     let songData=JSON.parse(request.responseText);
                     handleSearchSubmit(event,songData['data']);
-                    console.log(songData['data']);
                 }
             }
             function handleSearchSubmit(event,Data) {
@@ -315,7 +311,6 @@ function dynamicAppendSinger(Data,container){
                             'song_id':this.id
                         };
                         xhr1.send(JSON.stringify(jsData1));
-                        console.log("fuck1");
                         xhr1.onreadystatechange=function(){
                             if(xhr1.readyState==4&&xhr1.status==200){
                                 lyricArray = [];
@@ -365,7 +360,6 @@ function dynamicAppendSinger(Data,container){
                     }
                     playCell.appendChild(playButton);
                     row.appendChild(playCell);
-                    console.log(row);
                     // 将行添加到表体
                     tbody.appendChild(row);
                 }
