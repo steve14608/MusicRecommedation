@@ -2,12 +2,12 @@ const avatarForm=document.getElementById('avatarForm');
 const avatar=document.getElementById('avatar');
 let xhr = new XMLHttpRequest();
 xhr.open('POST', '/getUserAvatar', true);
-xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.setRequestHeader('Content-Type', 'blob');
 xhr.setRequestHeader('X-CSRFToken',getCSRF());
 xhr.send();
 xhr.onreadystatechange=function(){
                             if(xhr.readyState==4&&xhr.status==200){
-                                avatar.src = xhr.responseText
+                                avatar.src = URL.createObjectURL(xhr.response)
                             }
                         };
 //console.log(xhr.response);

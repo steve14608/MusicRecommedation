@@ -56,7 +56,7 @@ def signup(request):
         user = {'user_account': val['user_account'], 'user_password': val['user_password'], 'user_id': ti,
                 'user_avatar': ti, 'user_bio': '无', 'user_nickname': '默认'}
         database.insert(request_name='user', val=user)
-        avatar = {'avatar_index': ti}
+        avatar = {'avatar_index': ti,'avatar':'avatars/avatar.jpg'}
         database.insert(request_name='avatar', val=avatar)
         rep = HttpResponse(content=ti, status=200)
         rep.set_cookie('user_id', ti)
