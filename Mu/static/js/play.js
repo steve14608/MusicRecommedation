@@ -127,12 +127,12 @@ scrollContainer.forEach(item =>{
     });
 })
 //动态添加歌曲
-function dynamicAppendSong(Data,container){
+function dynamicAppendSong(Data,container,classname){
     Data.forEach(item => {
         const listItem = document.createElement('li');
         const cover = document.createElement('img');
         const songname = document.createElement('div');
-        listItem.classList.add('item');
+        listItem.classList.add(classname);
         cover.src=item.cover;
         cover.alt=item.song_name;
         cover.id=item.song_id;
@@ -218,7 +218,7 @@ function dynamicAppendSinger(Data,container){
         const listItem = document.createElement('li');
         const cover = document.createElement('img');
         const singername = document.createElement('div');
-        listItem.classList.add('item');
+        listItem.classList.add('item-singer');
         cover.src=item.singer_pic;
         cover.alt=item.singer_name;
         cover.id=item.singer_id;

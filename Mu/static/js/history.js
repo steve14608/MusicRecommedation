@@ -9,8 +9,8 @@ window.addEventListener('DOMContentLoaded',function(){
         if(xhr.readyState==4 && xhr.status == 200){
             let historyData;
             historyData=JSON.parse(xhr.responseText);
-            dynamicAppendSong(historyData['items'],historyContainer);
-            console.log(historyData['items']);
+            dynamicAppendSong(historyData['items'],historyContainer,'item-history');
+            //console.log(historyData['items']);
         }
     }
 })

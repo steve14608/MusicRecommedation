@@ -155,10 +155,6 @@ def get_recommend_singer(request):
 
     user_songs = [hi.song_id for hi in database.query(request_name='user_history', val=val)]
     if len(user_songs) == 0:
-        # data = [
-        #     {'singer_id': i[0], 'singer_pic': song.getSingerHeadPic(i[0])} for i in
-        #
-        # ]
         data = []
         for i in database.query(request_name='most_listened_singer', val=None):
             temp = song.getSingerInfo(i[0])
@@ -182,14 +178,9 @@ def get_recommend_singer(request):
         int(i[0]) for i in recommendations
     ]
     if len(recommendations) > 0:
-        # return JsonResponse({"recommendations": recommendations}, status=200)
         data = []
         for i in recommendations:
             temp = song.getSingerInfo(i)
             data.append({'singer_id': i, 'singer_pic': temp[0], 'singer_name': temp[1]})
-        # data = [
-        #     {'singer_id': i, 'singer_pic': song.getSingerHeadPic(i)} for i in
-        #     recommendations
-        # ]
         return JsonResponse({'data': data}, status=200)
     return HttpResponse('暂无数据', status=404)

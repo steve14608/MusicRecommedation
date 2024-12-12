@@ -9,8 +9,8 @@ window.addEventListener('DOMContentLoaded',function(){
         if(xhr.readyState==4 && xhr.status == 200){
             let recommendationData;
             recommendationData=JSON.parse(xhr.responseText);
-            dynamicAppendSong(recommendationData['recommendations'],recSongContainer);
-            console.log(recommendationData['recommendations']);
+            dynamicAppendSong(recommendationData['recommendations'],recSongContainer,'item-song');
+            //console.log(recommendationData['recommendations']);
         }
     }
 })
