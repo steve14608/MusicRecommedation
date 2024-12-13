@@ -6,10 +6,11 @@ xhr.setRequestHeader('Content-Type', 'blob');
 xhr.setRequestHeader('X-CSRFToken',getCSRF());
 xhr.send();
 xhr.onreadystatechange=function(){
-                            if(xhr.readyState==4&&xhr.status==200){
-                                avatar.src = xhr.responseURL
-                            }
-                        };
+    if(xhr.readyState==4&&xhr.status==200){
+        avatar.src = xhr.responseURL
+    }
+};
+
 //console.log(xhr.response);
 function handleFiles(files) {
     if (files.length > 0) {

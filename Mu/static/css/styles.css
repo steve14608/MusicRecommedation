@@ -164,11 +164,10 @@ h2 .circle-logo {
     height: 150px;
     border-radius: 8px;
     margin-bottom: 10px;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
     -webkit-user-drag: none;
     -moz-user-drag: none;
     -ms-user-drag: none;
-    user-select: none;
 }
 
 .item-singer img {
@@ -180,7 +179,6 @@ h2 .circle-logo {
     -webkit-user-drag: none;
     -moz-user-drag: none;
     -ms-user-drag: none;
-    user-select: none;
 }
 
 /* Hover effects */
@@ -191,7 +189,6 @@ h2 .circle-logo {
     -webkit-user-drag: none;
     -moz-user-drag: none;
     -ms-user-drag: none;
-    user-select: none;
 }
 
 

@@ -98,10 +98,10 @@ def getSongBySingerId(request):
     val = {'song_singer_id': json_data['song_singer_id']}
     data = database.query(request_name='song_singer_id', val=val)  # songinfo的list
     if len(data) < 4:
-        da = getSingerSongInfo(val['song_singer_id'])[:10]
+        da = getSingerSongInfo(val['song_singer_id'])[:40]
     else:
         da = [
-            {'song_id': i.song_id, 'song_name': i.song_name} for i in data[:10]
+            {'song_id': i.song_id, 'song_name': i.song_name} for i in data[:40]
         ]
     return JsonResponse({'singer_name': data[0].song_singer, 'singer_id': data[0].song_singer_id, 'data': da},
                         status=200)

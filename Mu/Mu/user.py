@@ -111,7 +111,7 @@ def updateHistory(request):
 
 def getHistory(request):
     val = {'user_id': request.COOKIES.get('user_id')}
-    ids = database.query(request_name='user_history', val=val)[:8]
+    ids = database.query(request_name='user_history', val=val)[:10]
     data = [
         song.getSongById(sid.song_id) for sid in ids
     ]
