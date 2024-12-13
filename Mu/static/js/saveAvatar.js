@@ -10,6 +10,7 @@ xhr.onreadystatechange=function(){
         avatar.src = xhr.responseURL
     }
 };
+
 //console.log(xhr.response);
 function handleFiles(files) {
     if (files.length > 0) {

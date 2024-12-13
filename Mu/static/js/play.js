@@ -46,6 +46,7 @@ prevButton.addEventListener('click', function () {
 nextButton.addEventListener('click', function () {
     audio.currentTime=audio.currentTime+5;
 });
+
 //动态添加歌曲
 function dynamicAppendSong(Data,container,classname){
     Data.forEach(item => {
